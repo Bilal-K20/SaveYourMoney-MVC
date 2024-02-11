@@ -1,0 +1,19 @@
+﻿using System;
+namespace SaveYourMoney_MVC.Repositories
+{
+
+    using Microsoft.EntityFrameworkCore;
+    using SaveYourMoney_MVC.Models;
+
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+
+        }
+
+        public DbSet<Customer> Customers { get; set; }
+    }
+
+}
+

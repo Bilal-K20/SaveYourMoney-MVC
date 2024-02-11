@@ -1,7 +1,39 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using System.Configuration;
+using SaveYourMoney_MVC.BusinessLogic;
+using SaveYourMoney_MVC.Repositories;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
+
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// we need to add al dependencies here
 builder.Services.AddControllersWithViews();
+//builder.Services.AddScoped<ISaveYourMoneyDatabase, SaveYourMoneyDatabase>();
+
+
+//builder.Services.AddDbContext<SaveYourMoneyDbContext>(options => options.UseSqlServer("Server=localhost,1433; Database=<SaveYourMoneyDb>; User Id=sa; Password=Bilaal2000"));
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+//builder.Services.AddDbContext<SaveYourMoneyDbContext>((serviceProvider, options) =>
+//{
+//    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+//    var connectionString = configuration.GetConnectionString("DefaultConnection");
+//    options.UseSqlServer(connectionString);
+//});
+
+//builder.Services.AddScoped<ILoginAndSignUpManager, LoginAndSignUpManager>();
 
 var app = builder.Build();
 
@@ -23,6 +55,10 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=LoginAndSignUp}/{action=Login}/{id?}");
 
 app.Run();
 
