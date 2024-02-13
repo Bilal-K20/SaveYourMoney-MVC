@@ -54,16 +54,21 @@ namespace SaveYourMoney_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
-
             // Validate the user's credentials (e.g., using a service or database query)
-            if (IsValidUser(loginViewModel.Username, loginViewModel.Password))
+            bool isValidUser = IsValidUser(loginViewModel.Username, loginViewModel.Password);
+
+            if (isValidUser)
             {
                 // Set authentication cookie
                 var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, loginViewModel.Username)
-                        // Add any additional claims as needed
-                    };
+
+                {
+
+                    new Claim(ClaimTypes.Name, loginViewModel.Username)
+
+                    // Add any additional claims as needed
+
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
@@ -73,17 +78,27 @@ namespace SaveYourMoney_MVC.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return Json(new { success = true, redirectTo = "/Dashboard/dashboard" }); // Redirect to the desired page after login
-
-
-                //return RedirectToAction("Index", "Home"); // Redirect to the desired page after login
+                // Return success response
+                return Json(new { success = true, message = "Login Successful!" , redirectTo = "/Dashboard/dashboard" });
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Invalid username or password");
+                // Return error response
+                return Json(new { success = false, message = "Invalid username or password" });
             }
+        }
 
-            return View(loginViewModel);
+        [HttpGet]
+        public IActionResult SignUp()
+        {
+            var signUpViewModel = new SignUpViewModel();
+            return View(signUpViewModel);
+        }
+
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
 
         private bool IsValidUser(string username, string password)
@@ -91,7 +106,15 @@ namespace SaveYourMoney_MVC.Controllers
             bool isValidUser = false;
             try
             {
-                isValidUser = LoginAndSignUpManager.GetUserLoginDetails(username);
+                var loginDetails = _loginManager.LoginAsync(username, password);
+                if (loginDetails != null && loginDetails.Result.Success)
+                {
+                    isValidUser = true;
+                }
+                else
+                {
+                    isValidUser = false;
+                }
 
             }
             catch (Exception ex)
@@ -99,28 +122,6 @@ namespace SaveYourMoney_MVC.Controllers
                 var message = ex.Message;
             }
 
-
-
-            // Check if the username meets the required criteria (at least 3 characters and not an email)
-            //var usernameRegex = new Regex(@"^(?!.*@).{3,}$");
-            //if (!usernameRegex.IsMatch(username))
-            //{
-            //    return false;
-            //}
-            //else if (username == usernameFromDb && password == passwordFromDb)
-            //{
-            //    return true;
-            //}
-
-
-            // Here you would typically validate the password against some stored hash or external service
-            // For demonstration purposes, let's assume the password is valid if it's not empty
-            //if (string.IsNullOrEmpty(password))
-            //{
-            //    return false;
-            //}
-
-            // If both username and password pass validation, return true
             return isValidUser;
         }
     }

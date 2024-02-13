@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +24,15 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/LoginAndSignUp/Login"; // Customize the login path if needed
+        options.AccessDeniedPath = "/Shared/AccessDenied"; // Customize the access denied path if needed
+    });
+
+builder.Services.AddScoped<ILoginManager, LoginManager>();
 
 
 //builder.Services.AddDbContext<SaveYourMoneyDbContext>((serviceProvider, options) =>

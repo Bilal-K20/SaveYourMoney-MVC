@@ -12,7 +12,8 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form id="loginForm" method="post">
+        <form id="loginForm" method="post" asp-action="Login" asp-controller="LoginAndSignUp">
+            @Html.AntiForgeryToken()
             <div class="form-group">
                 <label asp-for="Username"></label>
                 <input asp-for="Username" class="form-control" required>
@@ -28,6 +29,7 @@
             </div>
         </form>
     </div>
+    <script src="~/js/loginValidation.js"></script>
 </body>
 </html>
 
@@ -82,56 +84,54 @@
             }
 </style>
 
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent default form submission
 
-        // Collect form data
-        var formData = new FormData(document.getElementById('loginForm'));
-        var username = formData.get('Username');
-        var password = formData.get('Password');
+@*<script>
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
 
-        // Client-side validation
-        var usernameRegex = /^[^\s@@]+$/; // Regular expression to match any non-empty string that is not an email address
-        if (!username || username.length < 3 || !usernameRegex.test(username)) {
-            alert('Username must be at least three characters long and cannot be an email address.');
-            return; // Stop form submission if validation fails
-        }
-        if (!password) {
-            alert('Please enter a password.');
-            return; // Stop form submission if validation fails
-        }
+            // Collect form data
+            var formData = new FormData(document.getElementById('loginForm'));
+            var username = formData.get('Username');
+            var password = formData.get('Password');
 
-        // AJAX request to submit form data to server
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/LoginAndSignUp/Login'); // Replace with your actual controller action endpoint
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                // Handle successful response from server
-                console.log(xhr.responseText);
-                alert("You have successfully logged in");
-
-                // Check if login was successful
-                var response = JSON.parse(xhr.responseText);
-                if (!response.success) {
-                    // If login was not successful, display error message
-                    alert("Login failed: " + response.message);
-                } else {
-                    // If login was successful, redirect to dashboard
-                    window.location.href = '/Dashboard/dashboard';
-                }
-            } else {
-                // Handle error response from server
-                console.error('Error:', xhr.statusText);
-                alert("Login failed. Please try again later.");
+            // Client-side validation
+            var usernameRegex = /^[^\s@@]+$/; // Regular expression to match any non-empty string that is not an email address
+            if (!username || username.length < 3 || !usernameRegex.test(username)) {
+                alert('Username must be at least three characters long and cannot be an email address.');
+                return; // Stop form submission if validation fails
             }
-        };
-        xhr.onerror = function () {
-            // Handle network errors
-            console.error('Request failed due to network errors.');
-        };
-        xhr.send(JSON.stringify({ Username: username, Password: password }));
-    });
+            if (!password) {
+                alert('Please enter a password.');
+                return; // Stop form submission if validation fails
+            }
 
-</script>
+            // AJAX request to submit form data to server
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/LoginAndSignUp/Login'); // Replace with your actual controller action endpoint
+            //xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Handle successful response from server
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        // If login was successful, redirect to dashboard
+                        window.location.href = response.redirectTo;
+                    } else {
+                        // If login was not successful, display error message
+                        alert("Login failed: " + response.message);
+                    }
+                } else {
+                    // Handle error response from server
+                    console.error('Error:', xhr.statusText);
+                    alert("Login failed. Please try again later.");
+                }
+            };
+            xhr.onerror = function () {
+                // Handle network errors
+                console.error('Request failed due to network errors.');
+                alert("Login failed. Please try again later.");
+            };
+            xhr.send(JSON.stringify({ Username: username, Password: password }));
+        });
+
+    </script>*@
