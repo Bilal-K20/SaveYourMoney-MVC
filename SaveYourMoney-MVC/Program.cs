@@ -33,6 +33,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddScoped<ILoginManager, LoginManager>();
+builder.Services.AddScoped<ISignUpManager, SignUpManager>();
 
 
 //builder.Services.AddDbContext<SaveYourMoneyDbContext>((serviceProvider, options) =>

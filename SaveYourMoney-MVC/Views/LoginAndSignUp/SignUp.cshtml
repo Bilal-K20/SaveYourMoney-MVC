@@ -1,44 +1,104 @@
 ﻿@model SignUpViewModel
-@{ Layout = null}
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sign Up</title>
-        <link rel="stylesheet" href="/css/SignUp/SignUp.css">
-    </head>
+@{
+    ViewData["Title"] = "Sign Up";
+}
 
-    <body>
-        <div class="signup-container">
-            <h2>Sign Up</h2>
-            <form id="signUpForm" asp-action="SignUp">
-                <div class="form-group">
-                    <label asp-for="FirstName" for="FirstName">First Name</label>
-                    <input asp-for="FirstName" placeholder="Enter your first name" type="text" id="firstname" name="firstname" required>
-                </div>
-                <div class="form-group">
-                    <label asp-for="LastName" for="LastName">Last Name</label>
-                    <input asp-for="LastName" placeholder="Enter your last name" type="text" id="lastname" name="lastname" required>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Username" for="username">Username</label>
-                    <input asp-for="Username" type="text" placeholder="create a username" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Email" for="email">Email</label>
-                    <input asp-for="Email" type="email" id="email" placeholder="Enter your email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Password" for="password">Password</label>
-                    <input asp-for="Password" type="password" id="password" placeholder="Enter your secure password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ConfirmPassword" for="confirm-password">Confirm Password</label>
-                    <input asp-for="ConfirmPassword" type="password" id="confirm-password" placeholder="retype your password" name="confirm-password" required>
-                </div>
-                <button id="signUpButton" type="submit">Sign Up</button>
-            </form>
-        </div>
-    </body>
-</html>
+<div class="signup-page">
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form id="signUpForm" asp-action="SignUp">
+            <div class="form-group">
+                <label asp-for="FirstName" for="FirstName">First Name</label>
+                <input asp-for="FirstName" placeholder="Enter your first name" type="text" id="firstname" name="firstname" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" for="LastName">Last Name</label>
+                <input asp-for="LastName" placeholder="Enter your last name" type="text" id="lastname" name="lastname" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="Username" for="username">Username</label>
+                <input asp-for="Username" type="text" placeholder="create a username" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" for="email">Email</label>
+                <input asp-for="Email" type="email" id="email" placeholder="Enter your email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" for="password">Password</label>
+                <input asp-for="Password" type="password" id="password" placeholder="Enter your secure password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" for="confirm-password">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" id="ConfirmPassword" placeholder="retype your password" name="ConfirmPassword" required>
+            </div>
+            <button id="signUpButton" type="submit">Sign Up</button>
+        </form>
+    </div>
+</div>
+<style>
+    /* Add styles specific to the signup form */
+    .signup-container {
+        margin-top: 50px; /* Adjust this value to create space between the navbar and the signup form */
+        padding: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+
+        .signup-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .signup-container form {
+            max-width: 500px; /* Adjust the width as needed */
+            margin: 0 auto;
+        }
+
+        .signup-container .form-group {
+            margin-bottom: 20px;
+        }
+
+        .signup-container label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .signup-container input[type="text"],
+        .signup-container input[type="email"],
+        .signup-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+
+        .signup-container button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+            .signup-container button:hover {
+                background-color: #0056b3;
+            }
+
+    .signup-page {
+        padding-top: 50px; /* Adjust this value to create space between the navbar and the signup form */
+        background-color: #f8f9fa;
+    }
+
+    .signup-container {
+        max-width: 500px; /* Adjust the width as needed */
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+</style>

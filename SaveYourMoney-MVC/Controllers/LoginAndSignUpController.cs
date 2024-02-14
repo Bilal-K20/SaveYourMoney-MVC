@@ -21,6 +21,7 @@ namespace SaveYourMoney_MVC.Controllers
         private readonly ILogger<LoginAndSignUpController> _logger;
         private readonly ILoginAndSignUpManager LoginAndSignUpManager;
         private readonly ILoginManager _loginManager;
+        private readonly ISignUpManager _signUpManager;
         //private readonly ISaveYourMoneyDatabase saveYourMoneyDatabase;
         //private readonly ISaveYourMoneyDbContext SaveYourMoneyDbContext;
 
@@ -35,9 +36,10 @@ namespace SaveYourMoney_MVC.Controllers
         //    SaveYourMoneyDbContext = saveYourMoneyDbContext;
         //}
 
-        public LoginAndSignUpController(ILoginManager loginManager)
+        public LoginAndSignUpController(ILoginManager loginManager, ISignUpManager signUpManager)
         {
             _loginManager = loginManager;
+            _signUpManager = signUpManager;
         }
         //public LoginAndSignUpController(ILoginAndSignUpManager loginAndSignUpManager)
         //{
@@ -79,7 +81,7 @@ namespace SaveYourMoney_MVC.Controllers
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                 // Return success response
-                return Json(new { success = true, message = "Login Successful!" , redirectTo = "/Dashboard/dashboard" });
+                return Json(new { success = true, message = "Login Successful!", redirectTo = "/Dashboard/dashboard" });
             }
             else
             {
@@ -95,6 +97,38 @@ namespace SaveYourMoney_MVC.Controllers
             return View(signUpViewModel);
         }
 
+        [HttpPost]
+        public IActionResult SignUp(SignUpViewModel signUpViewModel)
+        {
+            bool isUserRegistered = false;
+
+            var firstName = signUpViewModel.FirstName;
+            var lastName = signUpViewModel.LastName;
+            var email = signUpViewModel.Email;
+            var username = signUpViewModel.Username;
+            var password = signUpViewModel.Password;
+            var confirmPassword = signUpViewModel.ConfirmPassword;
+
+            var isSubmissionValidated = _signUpManager.checkUserSubmission(firstName, lastName, email, username, password, confirmPassword);
+
+            if (isSubmissionValidated)
+            {
+                isUserRegistered = _signUpManager.RegisterANewCustomer(firstName, lastName, email, username, password);
+
+            }
+
+            if (isUserRegistered)
+            {
+
+                return RedirectToAction("Dashboard", "Dashboard");
+
+            }
+            else
+            {
+                return View(signUpViewModel);
+            }
+
+        }
 
         public IActionResult AccessDenied()
         {
