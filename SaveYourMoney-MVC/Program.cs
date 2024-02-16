@@ -17,10 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // we need to add al dependencies here
 builder.Services.AddControllersWithViews();
-//builder.Services.AddScoped<ISaveYourMoneyDatabase, SaveYourMoneyDatabase>();
-
-
-//builder.Services.AddDbContext<SaveYourMoneyDbContext>(options => options.UseSqlServer("Server=localhost,1433; Database=<SaveYourMoneyDb>; User Id=sa; Password=Bilaal2000"));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -30,20 +26,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/LoginAndSignUp/Login"; // Customize the login path if needed
         options.AccessDeniedPath = "/Shared/AccessDenied"; // Customize the access denied path if needed
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     });
 
 builder.Services.AddScoped<ILoginManager, LoginManager>();
 builder.Services.AddScoped<ISignUpManager, SignUpManager>();
+builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 
-
-//builder.Services.AddDbContext<SaveYourMoneyDbContext>((serviceProvider, options) =>
-//{
-//    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-//    var connectionString = configuration.GetConnectionString("DefaultConnection");
-//    options.UseSqlServer(connectionString);
-//});
-
-//builder.Services.AddScoped<ILoginAndSignUpManager, LoginAndSignUpManager>();
 
 var app = builder.Build();
 
@@ -59,6 +48,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

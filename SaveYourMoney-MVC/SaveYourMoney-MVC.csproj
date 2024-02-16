@@ -17,6 +17,9 @@
     <None Remove="Views\Dashboard\" />
     <None Remove="Entities\" />
     <None Remove="Migrations\" />
+    <None Remove="Views\Transactions\" />
+    <None Remove="Views\Budgets\" />
+    <None Remove="Views\Category\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BusinessLogic\" />
@@ -27,6 +30,9 @@
     <Folder Include="Entities\" />
     <Folder Include="Migrations\" />
     <Folder Include="wwwroot\css\SignUp\" />
+    <Folder Include="Views\Transactions\" />
+    <Folder Include="Views\Budgets\" />
+    <Folder Include="Views\Category\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />

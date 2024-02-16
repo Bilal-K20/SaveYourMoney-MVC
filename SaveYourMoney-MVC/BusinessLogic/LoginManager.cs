@@ -18,19 +18,29 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
         public async Task<LoginResult> LoginAsync(string username, string password)
         {
-            var user = await _dbContext.Customers.FirstOrDefaultAsync(u => u.UserName == username);
-
-            if (user == null)
+            try
             {
-                return new LoginResult { Success = false, Message = "User not found." };
-            }
+                var user = await _dbContext.Customers.FirstOrDefaultAsync(u => u.UserName == username);
 
-            if (!VerifyPassword(password, user.Password))
+                if (user == null)
+                {
+                    return new LoginResult { Success = false, Message = "User not found." };
+                }
+
+                if (!VerifyPassword(password, user.Password))
+                {
+                    return new LoginResult { Success = false, Message = "Incorrect password." };
+                }
+
+            }
+            catch (Exception ex)
             {
-                return new LoginResult { Success = false, Message = "Incorrect password." };
-            }
+                 var errorMessage = ex.Message;
+                return new LoginResult { Success = false, Message = "Sorry something went horribly wrong..." };
 
+            }
             return new LoginResult { Success = true, Message = "Login successful." };
+
         }
 
         // You need to implement this method based on how you store and verify passwords

@@ -1,0 +1,18 @@
+﻿@model SaveYourMoney_MVC.ViewModels.CategoryViewModel
+
+
+<h1>Categories</h1>
+
+@if (Model.Categories == null || Model.Categories.Count == 0)
+	{
+		<p>no categories avalaible please ensure you have created a category</p>
+	}
+ else
+	{
+		<ul>
+			@foreach (var category in Model.Categories)
+				{
+					<li>@category.CategoryName</li>
+				}
+		</ul>
+	}

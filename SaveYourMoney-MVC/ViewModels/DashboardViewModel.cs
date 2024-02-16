@@ -1,8 +1,10 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using SaveYourMoney_MVC.Models;
 
 namespace SaveYourMoney_MVC.ViewModels
 {
+	[Authorize]
 	public class DashboardViewModel
 	{
 		public string  FirstName{ get; set; }

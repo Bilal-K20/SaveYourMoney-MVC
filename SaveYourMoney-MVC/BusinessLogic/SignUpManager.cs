@@ -27,21 +27,34 @@ namespace SaveYourMoney_MVC.BusinessLogic
         {
             bool isRegisterationSuccessful = false;
 
-            if (isUserSubmissionValidated)
+            try
             {
-                var newCustomer = new Customer();
-                newCustomer.FirstName = firstname;
-                newCustomer.LastName = lastname;
-                newCustomer.Email = email;
-                newCustomer.UserName = username;
-                newCustomer.Password = password;
+                if (isUserSubmissionValidated)
+                {
+                    //Need a method to check if the user qalready exists
+                    //Linq would be quickets and easiest way
+                    // the db currently allows users to register with exact same email etc
+                    // need to look at how to change the column properties.
 
-                _dbContext.Customers.Add(newCustomer);
-                _dbContext.SaveChanges();
+                    var newCustomer = new Customer();
+                    newCustomer.FirstName = firstname;
+                    newCustomer.LastName = lastname;
+                    newCustomer.Email = email;
+                    newCustomer.UserName = username;
+                    newCustomer.Password = password;
 
-                isRegisterationSuccessful = true;
+                    _dbContext.Customers.Add(newCustomer);
+                    _dbContext.SaveChanges();
 
+                    isRegisterationSuccessful = true;
+
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occured while registering a new customer: {ex.Message}");
+            }
+            
         
             return isRegisterationSuccessful;
         }

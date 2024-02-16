@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SaveYourMoney_MVC.ViewModels;
 
@@ -12,6 +13,7 @@ namespace SaveYourMoney_MVC.Controllers
     public class DashboardController : Controller
     {
         // GET: /<controller>/
+        [Authorize]
         public IActionResult Dashboard()
         {
             var dashboardViewModel = new DashboardViewModel();

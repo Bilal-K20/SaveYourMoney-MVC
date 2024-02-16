@@ -76,6 +76,9 @@ namespace SaveYourMoney_MVC.Controllers
                 var authProperties = new AuthenticationProperties
                 {
                     // Configure authentication properties (e.g., remember me)
+                    AllowRefresh = true,
+                    IsPersistent = loginViewModel.KeepMeLoggedIn
+                   
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
@@ -120,7 +123,7 @@ namespace SaveYourMoney_MVC.Controllers
             if (isUserRegistered)
             {
 
-                return RedirectToAction("Dashboard", "Dashboard");
+                return RedirectToAction("Login", "LoginAndSignUp");
 
             }
             else

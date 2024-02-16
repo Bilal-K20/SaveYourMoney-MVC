@@ -1,9 +1,15 @@
-﻿namespace SaveYourMoney_MVC.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SaveYourMoney_MVC.Models
 {
     public class Budget
     {
-        public int Id { get; set; }
-        public int Category { get; set; }
+        [Key]
+        public int BudgetId { get; set; }
+
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
         public double Amount { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
