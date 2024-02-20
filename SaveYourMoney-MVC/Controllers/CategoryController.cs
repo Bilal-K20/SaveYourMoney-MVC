@@ -35,51 +35,33 @@ namespace SaveYourMoney_MVC.Controllers
 
             categoryViewModel.Categories = listOfCategories;
 
-
-            //int customerId = -1; // Default value if CustomerId is not found in the session
-
-            // Check if the "CustomerId" key exists in the session
-
             string customerId;
 
             // Example of retrieving CustomerId from claims
             var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
             if (customerIdClaim != null)
             {
-                 customerId = customerIdClaim.Value;
+                customerId = customerIdClaim.Value;
                 // Use customerId as needed
             }
 
             var userId = HttpContext.Session.GetInt32("CustomerId");
             var username = HttpContext.Session.GetString("Username");
 
-            //if (HttpContext.Session.Keys.Contains("CustomerId"))
-            //{
-            //    // The key exists, retrieve its value
-            //    byte[] customerIdBytes;
-            //    if (HttpContext.Session.TryGetValue("CustomerId", out customerIdBytes))
-            //    {
-            //        // Convert the byte array to int
-            //        customerId = BitConverter.ToInt32(customerIdBytes);
-            //    }
-            //    else
-            //    {
-            //        // Handle the case where CustomerId value is null
-            //        // This could occur if the value associated with the key is null
-            //        // For example:
-            //        // return BadRequest("CustomerId value is null.");
-            //    }
-            //}
-            //else
-            //{
-            //    // Handle the case where CustomerId key is not found in the session
-            //    // For example:
-            //    // return BadRequest("CustomerId key not found in the session.");
-            //}
 
             return View(categoryViewModel);
         }
 
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddCategory()
+        {
+            var addCategoryViewModel = new AddCategoryViewModel();
+            return View(addCategoryViewModel);
+        }
+
+
+        [Authorize]
         [HttpPost]
         public IActionResult AddCategory(AddCategoryViewModel addCategoryViewModel)
         {
