@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SaveYourMoney_MVC.BusinessLogic;
 using SaveYourMoney_MVC.Repositories;
@@ -22,29 +23,15 @@ namespace SaveYourMoney_MVC.Controllers
         private readonly ILoginAndSignUpManager LoginAndSignUpManager;
         private readonly ILoginManager _loginManager;
         private readonly ISignUpManager _signUpManager;
-        //private readonly ISaveYourMoneyDatabase saveYourMoneyDatabase;
-        //private readonly ISaveYourMoneyDbContext SaveYourMoneyDbContext;
-
-        //public LoginAndSignUpController(ILogger<HomeController> logger)
-        //{
-        //    _logger = (ILogger<LoginAndSignUpController>?)logger;
-        //}
 
 
-        //public LoginAndSignUpController(ISaveYourMoneyDbContext saveYourMoneyDbContext)
-        //{
-        //    SaveYourMoneyDbContext = saveYourMoneyDbContext;
-        //}
 
         public LoginAndSignUpController(ILoginManager loginManager, ISignUpManager signUpManager)
         {
             _loginManager = loginManager;
             _signUpManager = signUpManager;
         }
-        //public LoginAndSignUpController(ILoginAndSignUpManager loginAndSignUpManager)
-        //{
-        //    LoginAndSignUpManager = loginAndSignUpManager;
-        //}
+
 
         [HttpGet]
         public IActionResult Login()
@@ -57,16 +44,65 @@ namespace SaveYourMoney_MVC.Controllers
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
             // Validate the user's credentials (e.g., using a service or database query)
-            bool isValidUser = IsValidUser(loginViewModel.Username, loginViewModel.Password);
+            bool isValidUser = await IsValidUser(loginViewModel.Username, loginViewModel.Password);
+
+            int? storedCustomerId;
+
+            //insetad of calling this method I have tried to get the UserId when the signs in so if it is
+            // successful then it will get the populate LoginResult
+            //var userId = GetUserIdByUsername(loginViewModel.Username);
 
             if (isValidUser)
             {
+
+                var loginResult = await _loginManager.LoginAsync(loginViewModel.Username, loginViewModel.Password);
+
+
+                if (loginResult == null)
+                {
+                    // Log a message indicating that loginResult is null
+                    _logger.LogError("Login result is null.");
+
+                    // Return an error response
+                    return Json(new { success = false, message = "An unexpected error occurred." });
+                }
+                else
+                {
+                    try
+                    {
+                        //Store user ID in session
+
+                        HttpContext.Session.SetInt32("CustomerId", loginResult.UserId);
+
+                        storedCustomerId = HttpContext.Session.GetInt32("CustomerId");
+
+
+                        // Set the CustomerId cookie
+                        Response.Cookies.Append("CustomerId", loginResult.UserId.ToString(), new CookieOptions
+                        {
+                            Expires = DateTimeOffset.Now.AddMinutes(30), // Set cookie expiration time
+                            HttpOnly = true, // Make the cookie inaccessible to JavaScript
+                            Secure = true // Ensure the cookie is only sent over HTTPS
+                        });
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the exception for debugging
+                        _logger.LogError(ex, "Error setting CustomerId in session");
+                        // Optionally handle the exception or return an error response
+                        return Json(new { success = false, message = "An unexpected error occurred." });
+                    }
+                }
+            
+
                 // Set authentication cookie
                 var claims = new List<Claim>
 
                 {
 
-                    new Claim(ClaimTypes.Name, loginViewModel.Username)
+                    new Claim(ClaimTypes.Name, loginViewModel.Username),
+                    new Claim("CustomerId", storedCustomerId.ToString())
 
                     // Add any additional claims as needed
 
@@ -93,6 +129,24 @@ namespace SaveYourMoney_MVC.Controllers
             }
         }
 
+        private int GetUserIdByUsername(string username)
+        {
+            var userId = -1;
+            try
+            {
+                // MUST READ - possibly good to include in the report
+                //just a thought is it worth just returning a whole object with all the details
+                // maybe having objects in session might cause a lot of load on the server 
+                var userDetails = _loginManager.GetUserDeatilsByUsername(username);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return userId;
+        }
+
         [HttpGet]
         public IActionResult SignUp()
         {
@@ -103,7 +157,7 @@ namespace SaveYourMoney_MVC.Controllers
         [HttpPost]
         public IActionResult SignUp(SignUpViewModel signUpViewModel)
         {
-            bool isUserRegistered = false;
+            int isUserRegistered = -1;
 
             var firstName = signUpViewModel.FirstName;
             var lastName = signUpViewModel.LastName;
@@ -120,7 +174,7 @@ namespace SaveYourMoney_MVC.Controllers
 
             }
 
-            if (isUserRegistered)
+            if (isUserRegistered == -1)
             {
 
                 return RedirectToAction("Login", "LoginAndSignUp");
@@ -138,13 +192,15 @@ namespace SaveYourMoney_MVC.Controllers
             return View();
         }
 
-        private bool IsValidUser(string username, string password)
+        private async Task<bool> IsValidUser(string username, string password)
         {
             bool isValidUser = false;
             try
             {
-                var loginDetails = _loginManager.LoginAsync(username, password);
-                if (loginDetails != null && loginDetails.Result.Success)
+                //var loginDetails = _loginManager.LoginAsync(username, password);
+                var loginResult = await _loginManager.LoginAsync(username, password);
+
+                if (loginResult != null && loginResult.Success)
                 {
                     isValidUser = true;
                 }

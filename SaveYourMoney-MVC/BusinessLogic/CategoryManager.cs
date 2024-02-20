@@ -19,6 +19,22 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
             return categories;
         }
+
+        public void AddCategory(string categoryName)
+        {
+            // Validation logic can be added here if needed
+
+            // Create new category entity
+            //var category = new Category {CusomterId=  CategoryName = categoryName };
+
+            // Add category to the database
+            //_categoryRepository.AddCategory(category);
+        }
+
+        public void AddCategory(Category category)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

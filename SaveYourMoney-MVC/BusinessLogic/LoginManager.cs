@@ -16,10 +16,41 @@ namespace SaveYourMoney_MVC.BusinessLogic
             _dbContext = dbContext;
         }
 
-        public async Task<LoginResult> LoginAsync(string username, string password)
+        public async Task<int> GetUserDeatilsByUsername(string username)
         {
+            var userId = -1;
+
             try
             {
+                var user = await _dbContext.Customers.FirstOrDefaultAsync(u => u.UserName == username);
+
+                if (user == null)
+                {
+                }
+                else
+                {
+                    userId = user.CustomerId;
+                }
+            }
+            catch (Exception ex)
+            {
+                var e = ex.Message;
+            }
+            return userId;
+        }
+
+        /*
+         * MAYBE I COULD RETURN USER ID ON SUCCESSFUL LOGIN... 
+         */
+        public async Task<LoginResult> LoginAsync(string username, string password)
+        {
+            int userId = -1;
+            try
+            {
+
+
+               userId = await GetUserDeatilsByUsername(username);
+
                 var user = await _dbContext.Customers.FirstOrDefaultAsync(u => u.UserName == username);
 
                 if (user == null)
@@ -29,7 +60,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
                 if (!VerifyPassword(password, user.Password))
                 {
-                    return new LoginResult { Success = false, Message = "Incorrect password." };
+                    return new LoginResult { Success = false, Message = "Incorrect password." , UserId = user.CustomerId};
                 }
 
             }
@@ -39,7 +70,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
                 return new LoginResult { Success = false, Message = "Sorry something went horribly wrong..." };
 
             }
-            return new LoginResult { Success = true, Message = "Login successful." };
+            return new LoginResult { Success = true, Message = "Login successful.", UserId = userId };
 
         }
 

@@ -5,7 +5,8 @@ namespace SaveYourMoney_MVC.BusinessLogic
 {
 	public interface ICategoryManager
 	{
-		List<Category> GetCategories();
+        void AddCategory(Category category);
+        List<Category> GetCategories();
 
 	}
 }

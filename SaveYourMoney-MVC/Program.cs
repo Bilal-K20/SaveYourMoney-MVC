@@ -21,6 +21,16 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add session services
+builder.Services.AddSession(options =>
+{
+    // Set a short timeout for testing purposes
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    // Make the session cookie essential
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -28,6 +38,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Shared/AccessDenied"; // Customize the access denied path if needed
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     });
+
 
 builder.Services.AddScoped<ILoginManager, LoginManager>();
 builder.Services.AddScoped<ISignUpManager, SignUpManager>();
@@ -45,9 +56,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using SaveYourMoney_MVC.Models;
 using SaveYourMoney_MVC.Repositories;
 
@@ -23,7 +26,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
         }
 
 
-        public bool RegisterANewCustomer(string firstname, string lastname, string email, string username, string password)
+        public int RegisterANewCustomer(string firstname, string lastname, string email, string username, string password)
         {
             bool isRegisterationSuccessful = false;
 
@@ -46,8 +49,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
                     _dbContext.Customers.Add(newCustomer);
                     _dbContext.SaveChanges();
 
-                    isRegisterationSuccessful = true;
-
+                    return newCustomer.CustomerId;
                 }
             }
             catch (Exception ex)
@@ -56,8 +58,27 @@ namespace SaveYourMoney_MVC.BusinessLogic
             }
             
         
-            return isRegisterationSuccessful;
+            return -1;
         }
+
+        private async Task SignInAsync(Customer user)
+        {
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.CustomerId.ToString()), // Store CustomerId in claims
+            new Claim(ClaimTypes.Name, user.UserName), // Store UserName in claims
+            // Add more claims as needed
+        };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                // Set any authentication properties if needed
+            };
+
+            //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+        }
+
         private bool ValidateAllUserSubmission(string firstname, string lastname, string email, string username, string password, string confirmPassword)
         {
             // Validate first and last name
