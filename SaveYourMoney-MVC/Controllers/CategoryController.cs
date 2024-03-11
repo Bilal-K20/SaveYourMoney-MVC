@@ -17,10 +17,14 @@ namespace SaveYourMoney_MVC.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryManager CategoryManager;
+        private readonly IBudgetManager BudgetManager;
 
-        public CategoryController(ICategoryManager categoryManager)
+        private int? customerIdInt;
+
+        public CategoryController(ICategoryManager categoryManager, IBudgetManager budgetManager)
         {
             CategoryManager = categoryManager;
+            BudgetManager = budgetManager;
         }
 
 
@@ -31,10 +35,6 @@ namespace SaveYourMoney_MVC.Controllers
         {
             var categoryViewModel = new CategoryViewModel();
 
-            var listOfCategories = CategoryManager.GetCategories();
-
-            categoryViewModel.Categories = listOfCategories;
-
             string customerId;
 
             // Example of retrieving CustomerId from claims
@@ -42,11 +42,25 @@ namespace SaveYourMoney_MVC.Controllers
             if (customerIdClaim != null)
             {
                 customerId = customerIdClaim.Value;
+                HttpContext.Session.SetInt32("CustomerId", Convert.ToInt32(customerIdClaim.Value));
+
                 // Use customerId as needed
             }
 
             var userId = HttpContext.Session.GetInt32("CustomerId");
+            customerIdInt = Convert.ToInt32(userId);
+
             var username = HttpContext.Session.GetString("Username");
+
+
+            var listOfCategories = CategoryManager.GetCategories();
+
+            var listOfBudgets = BudgetManager.GetBudgets(Convert.ToInt32(userId));
+
+
+            categoryViewModel.Categories = listOfCategories;
+            categoryViewModel.Budgets = listOfBudgets;
+
 
 
             return View(categoryViewModel);
@@ -72,11 +86,17 @@ namespace SaveYourMoney_MVC.Controllers
                 return RedirectToAction("Categories", new { error = "Category name cannot be empty" });
             }
 
+            //if (customerId == null)
+            //{
+
+            //}
+
             // Create the category entity
-            var category = new Category { CategoryName = addCategoryViewModel.CategoryName };
+            var categoryName = addCategoryViewModel.CategoryName;
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
 
             // Add category to the database
-            CategoryManager.AddCategory(category);
+            CategoryManager.AddCategory(customerId, categoryName);
 
             // Redirect back to the Categories page
             return RedirectToAction("Categories");

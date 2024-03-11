@@ -43,6 +43,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<ILoginManager, LoginManager>();
 builder.Services.AddScoped<ISignUpManager, SignUpManager>();
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
+builder.Services.AddScoped<IBudgetManager, BudgetManager>();
 
 
 var app = builder.Build();

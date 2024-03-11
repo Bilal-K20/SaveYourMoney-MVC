@@ -5,9 +5,11 @@ namespace SaveYourMoney_MVC.BusinessLogic
 {
 	public interface ICategoryManager
 	{
-        void AddCategory(Category category);
         List<Category> GetCategories();
+        void AddCategory(int? customerId, string categoryName);
+        //decimal? GetBudgetAmountForCategory(int customerId,int categoryId);
 
-	}
+
+    }
 }
 

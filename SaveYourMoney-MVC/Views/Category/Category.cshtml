@@ -1,20 +1,52 @@
 ﻿@model SaveYourMoney_MVC.ViewModels.CategoryViewModel
 
+@{
+    ViewData["Title"] = "Categories";
+}
 
 <h1>Categories</h1>
 
-@if (Model.Categories == null || Model.Categories.Count == 0)
+@if (Model.Categories == null || !Model.Categories.Any())
 {
-    <p>no categories avalaible please ensure you have created a category</p>
+    <p>No categories available. Please ensure you have created a category.</p>
 }
 else
 {
-    <ul>
-        @foreach (var category in Model.Categories)
-        {
-            <li>@category.CategoryName</li>
-        }
-    </ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category Name</th>
+                <th>Budget Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model.Categories)
+            {
+                <tr>
+                    <td>@category.CategoryName</td>
+                    <td>
+                        @if (category.BudgetId != null)
+                        {
+                            @category.BudgetId
+                                    <!-- Assuming Amount is the property representing the budget amount -->
+                        }
+                        else
+                        {
+                        <span>No budget set</span>
+                            }
+                    </td>
+                    <td>
+                        <a asp-controller="Category" asp-action="EditCategory" asp-route-categoryName="@category.CategoryName" class="btn btn-primary">Edit</a>
+                        <form asp-controller="Category" asp-action="DeleteCategory" method="post" style="display: inline;">
+                            <input type="hidden" name="categoryName" value="@category.CategoryName" />
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this category?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 <a asp-controller="Category" asp-action="AddCategory" class="btn btn-primary">Add Category</a>

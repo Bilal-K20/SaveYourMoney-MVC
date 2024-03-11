@@ -8,6 +8,9 @@ namespace SaveYourMoney_MVC.Models
         [Key]
         public int BudgetId { get; set; }
 
+        [ForeignKey("Customer")]
+        public int CustomerId { get; set; }
+
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public double Amount { get; set; }
