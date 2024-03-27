@@ -8,11 +8,8 @@ namespace SaveYourMoney_MVC.Models
 		public int CategoryId { get; set; }
 
 		[ForeignKey("Customer")]
-		public int CusomterId { get; set; }
-
-		[ForeignKey("Budget")]
-        public int? BudgetId { get; set; }
-
+		public int CustomerId { get; set; }
+        public Customer Customer { get; set; } // Navigation property
         public string CategoryName { get; set; }
 	}
 }

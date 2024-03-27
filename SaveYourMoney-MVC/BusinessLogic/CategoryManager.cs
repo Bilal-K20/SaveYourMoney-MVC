@@ -31,7 +31,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
                 if (customerId != null || customerId != -1 && !string.IsNullOrWhiteSpace(categoryName))
                 {
                     var newCategory = new Category();
-                    newCategory.CusomterId = (int)customerId;
+                    newCategory.CustomerId = (int)customerId;
                     newCategory.CategoryName = categoryName;
 
                     _dbContext.Categories.Add(newCategory);
@@ -67,17 +67,21 @@ namespace SaveYourMoney_MVC.BusinessLogic
             throw new NotImplementedException();
         }
 
-        //public decimal? GetBudgetAmountForCategory(int customerId, int categoryId)
-        //{
-        //    try
-        //    {
+        public List<Category> GetCategories(int customerId)
+        {
+            List<Category>? categories = new List<Category>();
+            try
+            {
+                categories = _dbContext.Categories.Where(x => x.CustomerId == customerId).ToList();
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var error = ex.Message;
-        //    }
-        //}
+            }
+            catch (Exception ex)
+            {
+                var e = ex.Message;
+            }
+            return categories;
+
+        }
     }
 }
 

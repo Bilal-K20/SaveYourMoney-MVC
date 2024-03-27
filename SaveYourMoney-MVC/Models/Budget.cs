@@ -10,9 +10,13 @@ namespace SaveYourMoney_MVC.Models
 
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
+        public Customer Customer { get; set; } // Navigation property for Customer
 
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
+        public Category Category { get; set; } // Navigation property for Category
+
+
         public double Amount { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }

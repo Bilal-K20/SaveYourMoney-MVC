@@ -53,7 +53,7 @@ namespace SaveYourMoney_MVC.Controllers
             var username = HttpContext.Session.GetString("Username");
 
 
-            var listOfCategories = CategoryManager.GetCategories();
+            var listOfCategories = CategoryManager.GetCategories(Convert.ToInt32(userId));
 
             var listOfBudgets = BudgetManager.GetBudgets(Convert.ToInt32(userId));
 
@@ -99,7 +99,7 @@ namespace SaveYourMoney_MVC.Controllers
             CategoryManager.AddCategory(customerId, categoryName);
 
             // Redirect back to the Categories page
-            return RedirectToAction("Categories");
+            return RedirectToAction("Category");
         }
 
 

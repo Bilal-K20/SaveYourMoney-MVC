@@ -26,15 +26,23 @@ else
                 <tr>
                     <td>@category.CategoryName</td>
                     <td>
-                        @if (category.BudgetId != null)
-                        {
-                            @category.BudgetId
+                        @if (Model.Budgets != null)
+                            {
+                                var budget = Model.Budgets.FirstOrDefault(b => b.CategoryId == category.CategoryId);
+                                @if(budget != null)
+                                 {
+                                    @budget.Amount
+                                 }
+                                else
+                                {
+                                    <span>No budget amount could be fetched. </span>
+                                }
                                     <!-- Assuming Amount is the property representing the budget amount -->
                         }
                         else
                         {
-                        <span>No budget set</span>
-                            }
+                           <span>No budget set</span>
+                        }
                     </td>
                     <td>
                         <a asp-controller="Category" asp-action="EditCategory" asp-route-categoryName="@category.CategoryName" class="btn btn-primary">Edit</a>

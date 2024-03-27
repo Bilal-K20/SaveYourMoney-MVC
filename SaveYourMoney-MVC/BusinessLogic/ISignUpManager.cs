@@ -5,6 +5,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
 	{
 		bool checkUserSubmission(string firstname, string lastname, string email, string username, string password, string confirmPassword);
 		int RegisterANewCustomer(string firstname, string lastname, string email, string username, string password);
-    }
+		List<string> Guard(string firstname, string lastname, string email, string username, string password, string confirmPassword);
+	}
 }
 

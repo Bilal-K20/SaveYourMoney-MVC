@@ -1,9 +1,19 @@
 ﻿@model ErrorViewModel
 @{
     ViewData["Title"] = "Error";
+    var errorMessage = ViewData["ErrorMessage"] as string;
+    var errors = ViewData["Errors"] as List<string>;
 }
 
 <h1 class="text-danger">Error.</h1>
+<p>@errorMessage</p>
+<ul>
+    @foreach (var error in errors)
+        {
+            <li>@error</li>
+        }
+</ul>
+
 <h2 class="text-danger">An error occurred while processing your request.</h2>
 
 @if (Model.ShowRequestId)

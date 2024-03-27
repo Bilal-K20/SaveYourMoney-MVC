@@ -11,13 +11,40 @@ using SaveYourMoney_MVC.Repositories;
 namespace SaveYourMoney_MVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240216160519_ConstraintsForCategoryName")]
-    partial class ConstraintsForCategoryName
+    [Migration("20240318170248_AddBudgetCategoryRelationship")]
+    partial class AddBudgetCategoryRelationship
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.26");
+
+            modelBuilder.Entity("SaveYourMoney_MVC.Models.Budget", b =>
+                {
+                    b.Property<int>("BudgetId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("BudgetId");
+
+                    b.ToTable("Budgets");
+                });
 
             modelBuilder.Entity("SaveYourMoney_MVC.Models.Category", b =>
                 {

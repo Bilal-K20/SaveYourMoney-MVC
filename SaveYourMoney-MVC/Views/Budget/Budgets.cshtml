@@ -1,0 +1,188 @@
+﻿@model BudgetViewModel
+
+@{
+    ViewData["Title"] = "Budgets";
+}
+
+@if (Model.Budgets == null || !Model.Budgets.Any())
+{
+    <h1>No existing budgets found!</h1>
+    <p>There are no budgets to show because you haven't created any.</p>
+    <a href="CreateANewBudget">
+        <button class="btn-success">Create a new budget</button>
+
+    </a>
+}
+else
+{
+    <h1>Here are your current budgets!</h1>
+
+    <a class="btn-success" asp-controller="Budget" asp-action="CreateANewBudget">
+        <button>Create a new budget</button>
+    </a>
+
+    <table id="budgetTable">
+        <thead>
+            <tr>
+                <th>Budget Id</th>
+                <th>Budget Amount</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Date Set</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Budgets)
+            {
+                <tr>
+                    <td>@item.BudgetId</td>
+                    <td>@item.Amount</td>
+                    <td>@Model.Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId)?.CategoryName</td>
+                    <td>@item.Description</td>
+                    <td>@item.Date</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="entries-dropdown">
+        <label for="entriesPerPage">Entries per page:</label>
+        <select id="entriesPerPage">
+            <option value="5">5</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+
+    <div class="pagination-container">
+        <ul class="pagination">
+            <!-- Pagination links will be generated dynamically here -->
+        </ul>
+    </div>
+}
+
+<style>
+    /* Table styles */
+    #budgetTable {
+        font-family: Arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #budgetTable th, #budgetTable td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        #budgetTable th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        #budgetTable tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+    /* Pagination styles */
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+    }
+
+        .pagination li {
+            margin-right: 5px;
+        }
+
+            .pagination li a {
+                text-decoration: none;
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                color: #333;
+            }
+
+                .pagination li a:hover {
+                    background-color: #f2f2f2;
+                }
+
+        .pagination .active a {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+    /* Dropdown styles */
+    .entries-dropdown {
+        margin-top: 10px;
+    }
+</style>
+
+<script>document.addEventListener('DOMContentLoaded', function () {
+        var table = document.getElementById('budgetTable');
+        var paginationContainer = document.querySelector('.pagination-container');
+        var entriesDropdown = document.getElementById('entriesPerPage');
+        var itemsPerPage = parseInt(entriesDropdown.value); // Number of items to display per page
+        var currentPage = 1;
+
+        // Display the first page of data by default
+        displayData(currentPage);
+
+        // Setup pagination
+        setupPagination();
+
+        // Event listener for entries per page dropdown
+        entriesDropdown.addEventListener('change', function () {
+            updateEntriesPerPage();
+        });
+
+        function displayData(page) {
+            var start = (page - 1) * itemsPerPage;
+            var end = start + itemsPerPage;
+            var rows = document.querySelectorAll('#budgetTable tbody tr');
+            for (var i = 0; i < rows.length; i++) {
+                if (i >= start && i < end) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        function setupPagination() {
+            var pageCount = Math.ceil(document.querySelectorAll('#budgetTable tbody tr').length / itemsPerPage);
+            var paginationHTML = '';
+            for (var i = 1; i <= pageCount; i++) {
+                paginationHTML += `<li><a href="#" data-page="${i}">${i}</a></li>`;
+            }
+            paginationContainer.innerHTML = paginationHTML;
+
+            // Add click event listener to pagination links
+            paginationContainer.addEventListener('click', function (event) {
+                var target = event.target;
+                if (target.tagName === 'A') {
+                    var page = parseInt(target.getAttribute('data-page'));
+                    currentPage = page;
+                    displayData(currentPage);
+                    updatePaginationLinks();
+                }
+            });
+        }
+
+        function updateEntriesPerPage() {
+            itemsPerPage = parseInt(entriesDropdown.value);
+            currentPage = 1; // Reset to first page when changing entries per page
+            displayData(currentPage);
+            setupPagination();
+        }
+
+        function updatePaginationLinks() {
+            var paginationLinks = paginationContainer.querySelectorAll('a');
+            paginationLinks.forEach(function (link) {
+                link.parentNode.classList.remove('active');
+                if (parseInt(link.getAttribute('data-page')) === currentPage) {
+                    link.parentNode.classList.add('active');
+                }
+            });
+        }
+    });</script>

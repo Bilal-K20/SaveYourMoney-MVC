@@ -7,7 +7,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
 	{
 		List<Budget> GetBudgets(int customerId);
 		List<Budget> GetBudgetsForACategory(int customerId, int categoryId);
-		void AddBudget(int customerId, int categoryId ,double amount, string? description);
+		void AddBudget(int customerId, int categoryId ,double amount, string? description, DateTime date);
     }
 }
 

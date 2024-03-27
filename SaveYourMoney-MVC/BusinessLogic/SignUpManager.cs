@@ -19,6 +19,34 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
         bool isUserSubmissionValidated;
 
+        public List<string> Guard(string firstname, string lastname, string email, string username, string password, string confirmPassword)
+        {
+            var errors = new List<string>();
+
+            if (!IsValidName(firstname))
+                errors.Add("First name must contain at least 3 letters and contain only letters.");
+
+            if (!IsValidName(lastname))
+                errors.Add("Last name must contain at least 3 letters and contain only letters.");
+
+            if (!IsValidEmail(email))
+                errors.Add("Invalid email format.");
+
+            if (!IsValidUsername(username))
+                errors.Add("Username must contain only letters, numbers, and underscores.");
+
+            if (!IsValidPassword(password, confirmPassword))
+                errors.Add("Password must be at least 8 characters long, contain at least one special character, and match the confirmation.");
+
+            // Check if username or email already exist
+            if (UsernameExists(username))
+                errors.Add("Username already exists.");
+
+            if (EmailExists(email))
+                errors.Add("Email already exists.");
+            return errors;
+        }
+
         public bool checkUserSubmission(string firstname, string lastname, string email, string username, string password, string confirmPassword)
         {
             isUserSubmissionValidated =  ValidateAllUserSubmission(firstname, lastname, email, username, password, confirmPassword);
@@ -28,12 +56,20 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
         public int RegisterANewCustomer(string firstname, string lastname, string email, string username, string password)
         {
-            bool isRegisterationSuccessful = false;
+            //bool isRegisterationSuccessful = false;
+
+            var errors = Guard(firstname, lastname, email, username, password, password);
+
+            if (errors.Count > 0)
+            {
+                // If there are validation errors, return -1 indicating failure
+                return -1;
+            }
 
             try
             {
-                if (isUserSubmissionValidated)
-                {
+                //if (isUserSubmissionValidated)
+                //{
                     //Need a method to check if the user qalready exists
                     //Linq would be quickets and easiest way
                     // the db currently allows users to register with exact same email etc
@@ -50,11 +86,17 @@ namespace SaveYourMoney_MVC.BusinessLogic
                     _dbContext.SaveChanges();
 
                     return newCustomer.CustomerId;
-                }
+                //}
+                //else
+                //{
+
+                //}
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occured while registering a new customer: {ex.Message}");
+
+                throw;
             }
             
         
@@ -77,6 +119,16 @@ namespace SaveYourMoney_MVC.BusinessLogic
             };
 
             //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+        }
+
+        private bool UsernameExists(string username)
+        {
+            return _dbContext.Customers.Any(c => c.UserName == username);
+        }
+
+        private bool EmailExists(string email)
+        {
+            return _dbContext.Customers.Any(c => c.Email == email);
         }
 
         private bool ValidateAllUserSubmission(string firstname, string lastname, string email, string username, string password, string confirmPassword)
@@ -121,8 +173,8 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
         private bool IsValidPassword(string password, string confirmPassword)
         {
-            // Check if password is at least 6 characters long and contains at least one special character
-            if (password.Length < 6)
+            // Check if password is at least 8 characters long and contains at least one special character
+            if (password.Length < 8)
             {
                 return false;
 

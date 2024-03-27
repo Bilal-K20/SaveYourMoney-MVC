@@ -157,7 +157,7 @@ namespace SaveYourMoney_MVC.Controllers
         [HttpPost]
         public IActionResult SignUp(SignUpViewModel signUpViewModel)
         {
-            int isUserRegistered = -1;
+            //int isUserRegistered = -1;
 
             var firstName = signUpViewModel.FirstName;
             var lastName = signUpViewModel.LastName;
@@ -166,24 +166,50 @@ namespace SaveYourMoney_MVC.Controllers
             var password = signUpViewModel.Password;
             var confirmPassword = signUpViewModel.ConfirmPassword;
 
-            var isSubmissionValidated = _signUpManager.checkUserSubmission(firstName, lastName, email, username, password, confirmPassword);
+            var validateErrors = _signUpManager.Guard(firstName, lastName, email, username ,password, confirmPassword);
 
-            if (isSubmissionValidated)
+            //var isSubmissionValidated = _signUpManager.checkUserSubmission(firstName, lastName, email, username, password, confirmPassword);
+            if(validateErrors.Count > 0)
             {
-                isUserRegistered = _signUpManager.RegisterANewCustomer(firstName, lastName, email, username, password);
-
+                TempData["ErrorMessage"] = "User Registration has failed for the following reasons: ";
+                TempData["Errors"] = validateErrors;
+                return RedirectToAction("Error");
             }
 
-            if (isUserRegistered == -1)
+            // Attempt to register a new customer
+            int registerResult = _signUpManager.RegisterANewCustomer(firstName, lastName, email, username, password);
+
+            if(registerResult == -1)
             {
-
-                return RedirectToAction("Login", "LoginAndSignUp");
-
+                // Registration failed due to other reasons
+                TempData["ErrorMessage"] = "An unexpected error occurred during registration. Please try again later.";
+                return RedirectToAction("Error", "Home");
             }
             else
             {
-                return View(signUpViewModel);
+                return RedirectToAction("Login");
             }
+
+            //if (isSubmissionValidated)
+            //{
+            //    isUserRegistered = _signUpManager.RegisterANewCustomer(firstName, lastName, email, username, password);
+
+            //}
+
+            //if (isUserRegistered == -1)
+            //{
+            //    // needs to return the message with the information. 
+            //    //return RedirectToAction("Login", "LoginAndSignUp");
+
+            //    TempData["ErrorMessage"] = "An error occurred during registration. Please try again.";
+            //    return RedirectToAction("Error", "Home"); // Change "Home" to your error page controller and action name
+
+
+            //}
+            //else
+            //{
+            //    return View(signUpViewModel);
+            //}
 
         }
 

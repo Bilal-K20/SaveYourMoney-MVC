@@ -4,7 +4,7 @@
 
 namespace SaveYourMoney_MVC.Migrations
 {
-    public partial class AddUniqueConstraintToCategoryName : Migration
+    public partial class AddBudgetCategoryRelationship : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
