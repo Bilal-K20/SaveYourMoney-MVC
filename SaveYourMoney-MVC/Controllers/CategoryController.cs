@@ -19,7 +19,6 @@ namespace SaveYourMoney_MVC.Controllers
         private readonly ICategoryManager CategoryManager;
         private readonly IBudgetManager BudgetManager;
 
-        private int? customerIdInt;
 
         public CategoryController(ICategoryManager categoryManager, IBudgetManager budgetManager)
         {
@@ -48,7 +47,7 @@ namespace SaveYourMoney_MVC.Controllers
             }
 
             var userId = HttpContext.Session.GetInt32("CustomerId");
-            customerIdInt = Convert.ToInt32(userId);
+            var customerIdInt = Convert.ToInt32(userId);
 
             var username = HttpContext.Session.GetString("Username");
 
@@ -86,11 +85,6 @@ namespace SaveYourMoney_MVC.Controllers
                 return RedirectToAction("Categories", new { error = "Category name cannot be empty" });
             }
 
-            //if (customerId == null)
-            //{
-
-            //}
-
             // Create the category entity
             var categoryName = addCategoryViewModel.CategoryName;
             var customerId = HttpContext.Session.GetInt32("CustomerId");
@@ -101,6 +95,82 @@ namespace SaveYourMoney_MVC.Controllers
             // Redirect back to the Categories page
             return RedirectToAction("Category");
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditCategory(int categoryId)
+        {
+            // Retrieve category details by categoryId
+           var customerId = HttpContext.Session.GetInt32("CustomerId");
+            var category = CategoryManager.GetCategoryByCategoryId(customerId,categoryId);
+            EditCategoryViewModel viewModel;
+            if (category == null)
+            {
+                // Category not found, return not found error
+                return NotFound();
+            }
+            else
+            {
+                viewModel = new EditCategoryViewModel
+                {
+                    CategoryId = categoryId ,
+                    NewCategoryName = category.CategoryName,
+                    OldCategoryName = category.CategoryName
+                };
+            }
+
+            // Pass the category details to the view
+            return View(viewModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditCategory(EditCategoryViewModel editCategoryViewModel)
+        {
+
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
+
+            if (!ModelState.IsValid)
+            {
+                return View(editCategoryViewModel); // Return the view with validation errors
+            }
+
+
+            // Check if the new category name is different from the old category name
+            if (editCategoryViewModel.OldCategoryName == editCategoryViewModel.NewCategoryName)
+            {
+                ModelState.AddModelError("NewCategoryName", "New category name must be different from the old category name.");
+                return View(editCategoryViewModel); // Return the view with validation error for the new category name
+            }
+
+            // Update the category name
+            CategoryManager.UpdateCategory(customerId, editCategoryViewModel.CategoryId, editCategoryViewModel.NewCategoryName);
+
+            return RedirectToAction("Category");
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult DeleteCategory(int categoryId)
+        {
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
+
+            // Retrieve category details by categoryId
+            var category = CategoryManager.GetCategoryByCategoryId(customerId,categoryId);
+
+            if (category == null)
+            {
+                // Category not found, return not found error
+                return NotFound();
+            }
+
+            // Delete the category from the database
+            CategoryManager.DeleteCategory(customerId,categoryId);
+
+            // Redirect back to the Categories page
+            return RedirectToAction("Category");
+        }
+
 
 
     }

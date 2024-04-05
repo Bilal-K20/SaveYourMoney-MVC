@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SaveYourMoney_MVC.BusinessLogic;
+using SaveYourMoney_MVC.Models;
+using SaveYourMoney_MVC.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,11 +15,141 @@ namespace SaveYourMoney_MVC.Controllers
 {
     public class ExpenseController : Controller
     {
-        // GET: /<controller>/
-        public IActionResult Index()
+        private readonly ICategoryManager CategoryManager;
+        private readonly IBudgetManager BudgetManager;
+        private readonly IExpenseManager ExpenseManager;
+        public int UserId { get; set; }
+
+        public ExpenseController(ICategoryManager categoryManager, IBudgetManager budgetManager, IExpenseManager expenseManager)
         {
-            return View();
+            this.CategoryManager = categoryManager;
+            this.BudgetManager = budgetManager;
+            this.ExpenseManager = expenseManager;
         }
+        // GET: /<controller>/
+        [Authorize]
+        public IActionResult ViewExpenses()
+        {
+            string customerId;
+
+            //get user Id from the session
+            var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+            if (customerIdClaim != null)
+            {
+                customerId = customerIdClaim.Value;
+                HttpContext.Session.SetInt32("CustomerId", Convert.ToInt32(customerIdClaim.Value));
+
+                // Use customerId as needed
+            }
+            var userId = Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
+            UserId = userId;
+
+            List<Expense> list = new List<Expense>();
+
+            var expenses = ExpenseManager.GetAllExpenses(userId);
+            var categories = CategoryManager.GetCategories(userId);
+
+            
+                list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
+            
+          
+
+            var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses};
+
+
+
+            return View(expenseViewModel);
+        }
+
+        // GET: Expense/AddExpense
+        public IActionResult AddExpense()
+        {
+
+
+            var viewModel = new AddAnExpenseViewModel();
+            // Populate Categories here
+            viewModel.Categories = GetCategories(UserId); // You would replace this with your actual data retrieval logic
+            return PartialView("_AddAnExpense", viewModel);
+        }
+
+        // POST: Expense/AddExpense
+        [HttpPost]
+        public IActionResult AddExpense(AddAnExpenseViewModel model)
+        {
+            // Check model validity
+            if (ModelState.IsValid)
+            {
+                // Your logic to save the expense
+                // For example:
+                // expenseService.AddExpense(model);
+
+                // Redirect to another action after successful submission
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // Model is invalid, return the partial view with validation errors
+                // Repopulate Categories in case of redisplaying the form
+                model.Categories = GetCategories(UserId);
+                return PartialView("_AddAnExpensePartial", model);
+            }
+        }
+
+        // Dummy method to simulate category retrieval
+        private List<SelectListItem> GetCategories(int userId)
+        {
+            List<SelectListItem> selectlistItem = new List<SelectListItem>(); 
+            // Your logic to retrieve categories
+            var categories = CategoryManager.GetCategories(userId);
+            foreach (var category in categories)
+            {
+                selectlistItem.Add(new SelectListItem { Value = category.CategoryId.ToString(), Text = category.CategoryName });
+            }
+            return selectlistItem;
+            // For demonstration, just returning a hardcoded list
+            //return new List<SelectListItem>
+            //{
+            //    new SelectListItem { Value = "1", Text = "Category 1" },
+            //    new SelectListItem { Value = "2", Text = "Category 2" },
+            //    new SelectListItem { Value = "3", Text = "Category 3" }
+            //};
+        }
+
+        //public IActionResult ViewExpenses(string searchString)
+        //{
+        //    string customerId;
+
+        //    //get user Id from the session
+        //    var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+        //    if (customerIdClaim != null)
+        //    {
+        //        customerId = customerIdClaim.Value;
+        //        HttpContext.Session.SetInt32("CustomerId", Convert.ToInt32(customerIdClaim.Value));
+
+        //        // Use customerId as needed
+        //    }
+        //    var userId = Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
+
+        //    List<Expense> list = new List<Expense>();
+
+        //    var expenses = ExpenseManager.GetAllExpenses(userId);
+        //    var categories = CategoryManager.GetCategories(userId);
+
+        //    if (string.IsNullOrEmpty(searchString))
+        //    {
+        //        list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
+        //    }
+        //    else
+        //    {
+        //        list = ExpenseManager.GetExpenseBySearch(userId, searchString);
+        //    }
+
+        //    var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses };
+
+
+
+        //    return View(list);
+        //}
     }
 }
 

@@ -1,0 +1,99 @@
+﻿@model SaveYourMoney_MVC.ViewModels.ExpenseViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Expense Management</title>
+    <!-- Include Bootstrap CSS -->
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Expense Management</h1>
+
+        @if (Model.Expenses == null || Model.Expenses.Count() == 0)
+        {
+            <div class="alert alert-warning" role="alert">
+                Sorry, you haven't created any expenses yet. Please create one.
+            </div>
+            <button type="button" class="btn btn-primary mb-4" id="addExpenseButton">
+                Add an Expense
+            </button>
+        }
+        else
+        {
+            <!-- Table to display expenses -->
+            <div class="row mb-3">
+                <div class="col-auto">
+                    <label for="datePicker" class="form-label">Select Date:</label>
+                    <input type="date" id="datePicker" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <button id="filterButton" class="btn btn-primary mt-4">Filter</button>
+                </div>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Expense Title</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseTableBody">
+                    @foreach (var expense in Model.Expenses)
+                    {
+                        <tr>
+                            <td>@expense.ExpenseTitle</td>
+                            <td>@expense.Description</td>
+                            <td>@expense.Amount.ToString("C")</td>
+                            <td>@expense.Date.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addExpenseModalLabel">Add an Expense</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+      
+                    @*<partial name="_AddAnExpense" model="Model">*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+        console.log("Hello World!");
+        document.getElementById('filterButton').addEventListener('click', function () {
+            var selectedDate = document.getElementById('datePicker').value;
+            console.log('Selected Date:', selectedDate);
+        });
+
+        //document.getElementById('addExpenseButton').addEventListener('click', function () {
+        //    // Load the modal content using AJAX
+        //    $.get('@@Url.Action("AddExpense", "Expense")', function (data) {
+        //        // Inject the modal content into the modal body
+        //        $('.modal-body').html(data);
+
+        //        // Show the modal
+        //        $('#addExpenseModal').modal('show');
+        //    });
+        //});</script>
+</body>
+</html>

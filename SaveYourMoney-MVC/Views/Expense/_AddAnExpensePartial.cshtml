@@ -1,0 +1,51 @@
+﻿@model SaveYourMoney_MVC.ViewModels.AddAnExpenseViewModel
+
+
+
+
+<form asp-action="AddExpense" asp-controller="Expense" method="post">
+    <!-- Input fields for ExpenseTitle, Amount, SelectedCategoryId, ExpenseDescription, Date, AttachmentName, AttachmentData -->
+    <div class="form-group">
+        <label asp-for="ExpenseTitle">Expense Title</label>
+        <input asp-for="ExpenseTitle" class="form-control" />
+        <span asp-validation-for="ExpenseTitle" class="text-danger"></span>
+    </div>
+    <!-- Other fields -->
+    <button type="submit" class="btn btn-primary">Add Expense</button>
+</form>
+
+
+
+
+@*<div class="container">
+        <h2>Add an Expense</h2>
+        <form>
+            <div class="form-group">
+                <label for="expenseTitle">Expense Title</label>
+                <input type="text" class="form-control" id="expenseTitle" placeholder="Enter expense title" asp-for="ExpenseTitle">
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="number" class="form-control" id="amount" placeholder="Enter amount" asp-for="Amount">
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select class="form-control" id="category" asp-for="SelectedCategoryId" asp-items="Model.Categories">
+                    <option value="">Select category</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="expenseDescription">Description</label>
+                <textarea class="form-control" id="expenseDescription" rows="3" placeholder="Enter expense description" asp-for="ExpenseDescription"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" class="form-control" id="date" placeholder="Select date" asp-for="Date">
+            </div>
+            <div class="form-group">
+                <label for="attachment">Attachment</label>
+                <input type="file" class="form-control-file" id="attachment" asp-for="AttachmentData">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>*@

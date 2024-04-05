@@ -44,6 +44,7 @@ builder.Services.AddScoped<ILoginManager, LoginManager>();
 builder.Services.AddScoped<ISignUpManager, SignUpManager>();
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IBudgetManager, BudgetManager>();
+builder.Services.AddScoped<IExpenseManager, ExpenseManager>();
 
 
 var app = builder.Build();

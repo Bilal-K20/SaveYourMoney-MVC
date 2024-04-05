@@ -1,0 +1,24 @@
+﻿ @*Views/Expense/Index.cshtml 
+@model SaveYourMoney_MVC.ViewModels.ExpenseViewModel
+
+<h2>Expenses</h2>
+
+ Render the partial view for viewing expenses 
+<div id="viewExpensesPartial">
+    @await Html.PartialAsync("_ViewExpensesPartial", Model)
+</div>
+
+<hr />
+
+<h2>Add Expense</h2>
+<div id="addExpensePartial">
+    @await Html.PartialAsync("~/Views/Expense/_AddAnExpensePartial.cshtml", Model)
+</div>
+
+<hr />
+
+<h2>Edit Expense</h2>
+<div id="editExpensePartial">
+     Placeholder for editing expense partial view 
+</div>*@
+<h1>Index</h1>

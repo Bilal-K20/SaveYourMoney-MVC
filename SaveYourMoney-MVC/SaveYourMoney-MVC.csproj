@@ -20,6 +20,7 @@
     <None Remove="Views\Transactions\" />
     <None Remove="Views\Category\" />
     <None Remove="Views\Budget\" />
+    <None Remove="Views\Expense\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BusinessLogic\" />
@@ -33,6 +34,7 @@
     <Folder Include="Views\Transactions\" />
     <Folder Include="Views\Category\" />
     <Folder Include="Views\Budget\" />
+    <Folder Include="Views\Expense\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />

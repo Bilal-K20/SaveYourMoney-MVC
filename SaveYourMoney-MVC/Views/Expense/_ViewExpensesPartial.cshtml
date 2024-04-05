@@ -1,0 +1,43 @@
+﻿@model SaveYourMoney_MVC.ViewModels.ExpenseViewModel
+
+@if (Model != null)
+{
+    <h2>View Expenses</h2>
+
+    @if (Model.Expenses == null || !Model.Expenses.Any())
+    {
+        <h1>No expenses have been found</h1>
+        <p>Please try creating a new expense</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Expense Title</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <!-- Add more columns as needed -->
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var expense in Model.Expenses)
+                {
+                    <tr>
+                        <td>@expense.ExpenseTitle</td>
+                        <td>@expense.Description</td>
+                        <td>@expense.Amount</td>
+                        <td>@expense.Date.ToShortDateString()</td>
+                        <!-- Add more cells for additional properties -->
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+else
+{
+    <h2>Error: Model is null</h2>
+    <p>An unexpected error occurred. Please try again later.</p>
+}

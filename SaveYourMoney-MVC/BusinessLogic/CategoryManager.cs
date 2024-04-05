@@ -30,6 +30,9 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
                 if (customerId != null || customerId != -1 && !string.IsNullOrWhiteSpace(categoryName))
                 {
+
+                    // validate category name using regex
+
                     var newCategory = new Category();
                     newCategory.CustomerId = (int)customerId;
                     newCategory.CategoryName = categoryName;
@@ -42,30 +45,9 @@ namespace SaveYourMoney_MVC.BusinessLogic
             {
                var error = ex.Message;
             }
-            // Validation logic can be added here if needed
-
-            //create a new category object
-
-           
-
-            // It MUST have to populate it with a customer id and categoryname
-            //At this stage budget id should be null because this has to be set in the add a budget page
-
-
-            // Create new category entity
-
-            // add user properties to a category
-
-
-
-            // Add category to the database
-            //_categoryRepository.AddCategory(category);
+ 
         }
 
-        public void AddCategory(Category category)
-        {
-            throw new NotImplementedException();
-        }
 
         public List<Category> GetCategories(int customerId)
         {
@@ -73,7 +55,6 @@ namespace SaveYourMoney_MVC.BusinessLogic
             try
             {
                 categories = _dbContext.Categories.Where(x => x.CustomerId == customerId).ToList();
-
             }
             catch (Exception ex)
             {
@@ -81,6 +62,77 @@ namespace SaveYourMoney_MVC.BusinessLogic
             }
             return categories;
 
+        }
+
+        public Category GetCategoryByCategoryId(int? customerId , int categoryId)
+        {
+            var category = new Category();
+
+            try
+            {
+                if (customerId.HasValue && (categoryId != null || categoryId != 0))
+                {
+                    category = _dbContext.Categories.FirstOrDefault(c => c.CategoryId == categoryId && c.CustomerId == customerId);
+                }
+                else
+                {
+                    throw new ArgumentNullException();
+                }
+            }
+            catch (Exception ex)
+            {
+                var e = ex.Message;
+                throw;
+            }
+            return category;
+        }
+
+        public void UpdateCategory(int? customerId, int categoryId ,string categoryName)
+        {
+            try
+            {
+                var category = _dbContext.Categories.FirstOrDefault(c => c.CustomerId == customerId && c.CategoryId == categoryId);
+                if(category != null)
+                {
+                    category.CategoryName = categoryName;
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    var e = new ArgumentNullException();
+                    throw e;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public void DeleteCategory(int? customerId, int categoryId)
+        {
+            try
+            {
+                if(customerId != null || customerId != 0)
+                {
+                    var category =_dbContext.Categories.FirstOrDefault(c => c.CustomerId == customerId && c.CategoryId == categoryId);
+                    _dbContext.Categories.Remove(category);
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    //doesn't need a variable but i have done it just to understand how it works
+                    var e = new ArgumentNullException();
+                    throw e;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

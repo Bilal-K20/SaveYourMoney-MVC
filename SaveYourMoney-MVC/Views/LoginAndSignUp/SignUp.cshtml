@@ -38,289 +38,307 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 <script>
-    $(document).ready(function () {
-        // Attach event listeners for real-time validation
-        $('#firstname').on('input', validateFirstName);
-        $('#lastname').on('input', validateLastName);
-        $('#username').on('input', validateUsername);
-        $('#email').on('input', validateEmail);
-        $('#password').on('input', validatePassword);
-        $('#ConfirmPassword').on('input', validateConfirmPassword);
+$(document).ready(function () {
+    // Attach event listeners for real-time validation
+    $('#firstname').on('input', validateFirstName);
+    $('#lastname').on('input', validateLastName);
+    $('#username').on('input', validateUsername);
+    $('#email').on('input', validateEmail);
+    $('#password').on('input', validatePassword);
+    $('#ConfirmPassword').on('input', validateConfirmPassword);
 
-        // Attach form submission event listener
-        $('#signUpForm').submit(function (event) {
-            // Prevent form submission
-            event.preventDefault();
+    // Attach form submission event listener
+    $('#signUpForm').submit(function (event) {
+        // Prevent form submission
+        event.preventDefault();
 
-            // Perform client-side validation
-            var errors = validateSignUpForm();
+        // Perform client-side validation
+        var errors = validateSignUpForm();
 
-            if (errors.length > 0) {
-                // Display validation errors
-                alert("Please correct the following errors:\n" + errors.join("\n"));
-                return;
-            }
-
-            // If validation passes, submit the form
-            this.submit();
-        });
-
-        // Function to validate email format
-        function isValidEmail(email) {
-            return /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+        if (errors.length > 0) {
+            // Display validation errors
+            alert("Please correct the following errors:\n" + errors.join("\n"));
+            return;
         }
 
-        // Function to validate username format
+        // If validation passes, submit the form
+        this.submit();
+    });
+
+    // Function to validate email format
+    function isValidEmail(email) {
+        return /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+        }
+
+        // Function to validate username format and length
         function isValidUsername(username) {
-            return /^[a-zA-Z0-9_]+$/.test(username);
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        return "Username can only contain letters, numbers, and underscores.";
+        }
+        if (username.length < 3) {
+        return "Username must be at least 3 characters long.";
+        }
+        return true;
         }
 
         // Function to validate password strength
         function isValidPassword(password) {
-            return password.length >= 8 && /[^a-zA-Z0-9]/.test(password);
+        if (password.length < 8) {
+        return "Password must be at least 8 characters long.";
+        }
+        if (!/[^a-zA-Z0-9]/.test(password)) {
+        return "Password must contain at least one special character.";
+        }
+        return true;
         }
 
         // Function to validate first name
         function validateFirstName() {
-            var firstName = $('#firstname').val();
-            if (firstName.length < 3 || !/^[a-zA-Z]+$/.test(firstName)) {
-                $('#firstname').css('border-color', 'red');
-            } else {
-                $('#firstname').css('border-color', '');
-            }
+        var firstName = $('#firstname').val();
+        if (firstName.length < 3 || !/^[a-zA-Z]+$/.test(firstName)) {
+        $('#firstname').css('border-color', 'red');
+        } else {
+        $('#firstname').css('border-color', '');
+        }
         }
 
         // Function to validate last name
         function validateLastName() {
-            var lastName = $('#lastname').val();
-            if (lastName.length < 3 || !/^[a-zA-Z]+$/.test(lastName)) {
-                $('#lastname').css('border-color', 'red');
-            } else {
-                $('#lastname').css('border-color', '');
-            }
+        var lastName = $('#lastname').val();
+        if (lastName.length < 3 || !/^[a-zA-Z]+$/.test(lastName)) {
+        $('#lastname').css('border-color', 'red');
+        } else {
+        $('#lastname').css('border-color', '');
+        }
         }
 
         // Function to validate username
         function validateUsername() {
-            var username = $('#username').val();
-            if (!isValidUsername(username)) {
-                $('#username').css('border-color', 'red');
-            } else {
-                $('#username').css('border-color', '');
-            }
+        var username = $('#username').val();
+        var validationResult = isValidUsername(username);
+        if (validationResult !== true) {
+        $('#username').css('border-color', 'red');
+        $('#username-error').text(validationResult);
+        } else {
+        $('#username').css('border-color', '');
+        $('#username-error').text('');
+        }
         }
 
         // Function to validate email
         function validateEmail() {
-            var email = $('#email').val();
-            if (!isValidEmail(email)) {
-                $('#email').css('border-color', 'red');
-            } else {
-                $('#email').css('border-color', '');
-            }
+        var email = $('#email').val();
+        if (!isValidEmail(email)) {
+        $('#email').css('border-color', 'red');
+        } else {
+        $('#email').css('border-color', '');
+        }
         }
 
         // Function to validate password
         function validatePassword() {
-            var password = $('#password').val();
-            if (!isValidPassword(password)) {
-                $('#password').css('border-color', 'red');
-            } else {
-                $('#password').css('border-color', '');
-            }
+        var password = $('#password').val();
+        var validationResult = isValidPassword(password);
+        if (validationResult !== true) {
+        $('#password').css('border-color', 'red');
+        $('#password-error').text(validationResult);
+        } else {
+        $('#password').css('border-color', '');
+        $('#password-error').text('');
+        }
         }
 
         // Function to validate confirm password
         function validateConfirmPassword() {
-            var password = $('#password').val();
-            var confirmPassword = $('#ConfirmPassword').val();
-            if (password !== confirmPassword) {
-                $('#ConfirmPassword').css('border-color', 'red');
-            } else {
-                $('#ConfirmPassword').css('border-color', '');
-            }
+        var password = $('#password').val();
+        var confirmPassword = $('#ConfirmPassword').val();
+        if (password !== confirmPassword) {
+        $('#ConfirmPassword').css('border-color', 'red');
+        $('#confirm-password-error').text("Passwords do not match.");
+        } else {
+        $('#ConfirmPassword').css('border-color', '');
+        $('#confirm-password-error').text('');
+        }
         }
 
         // Function to validate form inputs
         function validateSignUpForm() {
-            var errors = [];
-            validateFirstName();
-            validateLastName();
-            validateUsername();
-            validateEmail();
-            validatePassword();
-            validateConfirmPassword();
+        var errors = [];
+        validateFirstName();
+        validateLastName();
+        validateUsername();
+        validateEmail();
+        validatePassword();
+        validateConfirmPassword();
 
-            // Check if any input fields have red borders
-            $('#signUpForm input').each(function () {
-                if ($(this).css('border-color') === 'rgb(255, 0, 0)') {
-                    errors.push($(this).prev('label').text() + " is invalid.");
-                }
-            });
-
-            return errors;
+        // Check if any input fields have red borders
+        $('#signUpForm input').each(function () {
+        if ($(this).css('border-color') === 'rgb(255, 0, 0)') {
+        errors.push($(this).prev('label').text() + " is invalid.");
         }
-    });
-</script>
-
-
-@*<script>
-
-         $(document).ready(function () {
-            $('#signUpForm').submit(function (event) {
-                // Prevent form submission
-                event.preventDefault();
-
-                // Perform client-side validation
-                var errors = validateSignUpForm();
-
-                if (errors.length > 0) {
-                    // Display validation errors
-                    alert("Please correct the following errors:\n" + errors.join("\n"));
-                    return;
-                }
-
-                // If validation passes, submit the form
-                this.submit();
-            });
-
-            // Function to validate email format
-            function isValidEmail(email) {
-                return /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-            }
-
-            // Function to validate username format
-            function isValidUsername(username) {
-                return /^[a-zA-Z0-9_]+$/.test(username);
-            }
-
-            // Function to validate password strength
-            function isValidPassword(password) {
-                return password.length >= 8 && /[^a-zA-Z0-9]/.test(password);
-            }
-
-            // Function to validate form inputs
-            function validateSignUpForm() {
-                var errors = [];
-                var firstName = $('#firstname').val();
-                var lastName = $('#lastname').val();
-                var username = $('#username').val();
-                var email = $('#email').val();
-                var password = $('#password').val();
-                var confirmPassword = $('#ConfirmPassword').val();
-
-                // Perform validation
-                if (firstName.length < 3 || !/^[a-zA-Z]+$/.test(firstName)) {
-                    errors.push("First name is invalid.");
-                    $('#firstname').css('border-color', 'red');
-                } else {
-                    $('#firstname').css('border-color', 'green');
-                }
-
-                if (lastName.length < 3 || !/^[a-zA-Z]+$/.test(lastName)) {
-                    errors.push("Last name is invalid.");
-                    $('#lastname').css('border-color', 'red');
-                } else {
-                    $('#lastname').css('border-color', 'green');
-                }
-
-                if (!isValidUsername(username)) {
-                    errors.push("Username is invalid.");
-                    $('#username').css('border-color', 'red');
-                } else {
-                    $('#username').css('border-color', 'green');
-                }
-
-                if (!isValidEmail(email)) {
-                    errors.push("Email is invalid.");
-                    $('#email').css('border-color', 'red');
-                } else {
-                    $('#email').css('border-color', 'green');
-                }
-
-                if (!isValidPassword(password)) {
-                    errors.push("Password must be at least 8 characters long and contain at least one special character.");
-                    $('#password').css('border-color', 'red');
-                } else {
-                    $('#password').css('border-color', 'green');
-                }
-
-                if (password !== confirmPassword) {
-                    errors.push("Passwords do not match.");
-                    $('#ConfirmPassword').css('border-color', 'red');
-                } else {
-                    $('#ConfirmPassword').css('border-color', 'green');
-                }
-
-                return errors;
-            }
         });
-    </script>*@
-<style>
-    /* Add styles specific to the signup form */
-    .signup-container {
-        margin-top: 50px; /* Adjust this value to create space between the navbar and the signup form */
-        padding: 20px;
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-    }
 
-        .signup-container h2 {
-            margin-bottom: 20px;
+        return errors;
         }
+        });
+    </script>
 
-        .signup-container form {
-            max-width: 500px; /* Adjust the width as needed */
-            margin: 0 auto;
-        }
+        @*<script>
 
-        .signup-container .form-group {
-            margin-bottom: 20px;
-        }
+                 $(document).ready(function () {
+                    $('#signUpForm').submit(function (event) {
+                        // Prevent form submission
+                        event.preventDefault();
 
-        .signup-container label {
-            display: block;
-            font-weight: bold;
-        }
+                        // Perform client-side validation
+                        var errors = validateSignUpForm();
 
-        .signup-container input[type="text"],
-        .signup-container input[type="email"],
-        .signup-container input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-        }
+                        if (errors.length > 0) {
+                            // Display validation errors
+                            alert("Please correct the following errors:\n" + errors.join("\n"));
+                            return;
+                        }
 
-        .signup-container button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: #fff;
-            cursor: pointer;
-        }
+                        // If validation passes, submit the form
+                        this.submit();
+                    });
 
-            .signup-container button:hover {
-                background-color: #0056b3;
+                    // Function to validate email format
+                    function isValidEmail(email) {
+                        return /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+                    }
+
+                    // Function to validate username format
+                    function isValidUsername(username) {
+                        return /^[a-zA-Z0-9_]+$/.test(username);
+                    }
+
+                    // Function to validate password strength
+                    function isValidPassword(password) {
+                        return password.length >= 8 && /[^a-zA-Z0-9]/.test(password);
+                    }
+
+                    // Function to validate form inputs
+                    function validateSignUpForm() {
+                        var errors = [];
+                        var firstName = $('#firstname').val();
+                        var lastName = $('#lastname').val();
+                        var username = $('#username').val();
+                        var email = $('#email').val();
+                        var password = $('#password').val();
+                        var confirmPassword = $('#ConfirmPassword').val();
+
+                        // Perform validation
+                        if (firstName.length < 3 || !/^[a-zA-Z]+$/.test(firstName)) {
+                            errors.push("First name is invalid.");
+                            $('#firstname').css('border-color', 'red');
+                        } else {
+                            $('#firstname').css('border-color', 'green');
+                        }
+
+                        if (lastName.length < 3 || !/^[a-zA-Z]+$/.test(lastName)) {
+                            errors.push("Last name is invalid.");
+                            $('#lastname').css('border-color', 'red');
+                        } else {
+                            $('#lastname').css('border-color', 'green');
+                        }
+
+                        if (!isValidUsername(username)) {
+                            errors.push("Username is invalid.");
+                            $('#username').css('border-color', 'red');
+                        } else {
+                            $('#username').css('border-color', 'green');
+                        }
+
+                        if (!isValidEmail(email)) {
+                            errors.push("Email is invalid.");
+                            $('#email').css('border-color', 'red');
+                        } else {
+                            $('#email').css('border-color', 'green');
+                        }
+
+                        if (!isValidPassword(password)) {
+                            errors.push("Password must be at least 8 characters long and contain at least one special character.");
+                            $('#password').css('border-color', 'red');
+                        } else {
+                            $('#password').css('border-color', 'green');
+                        }
+
+                        if (password !== confirmPassword) {
+                            errors.push("Passwords do not match.");
+                            $('#ConfirmPassword').css('border-color', 'red');
+                        } else {
+                            $('#ConfirmPassword').css('border-color', 'green');
+                        }
+
+                        return errors;
+                    }
+                });
+            </script>*@
+        <style>
+            /* Add styles specific to the signup form */
+            .signup-container {
+                margin-top: 50px; /* Adjust this value to create space between the navbar and the signup form */
+                padding: 20px;
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
             }
 
-    .signup-page {
-        padding-top: 50px; /* Adjust this value to create space between the navbar and the signup form */
-        background-color: #f8f9fa;
-    }
+                .signup-container h2 {
+                    margin-bottom: 20px;
+                }
 
-    .signup-container {
-        max-width: 500px; /* Adjust the width as needed */
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        background-color: #fff;
-    }
-</style>
+                .signup-container form {
+                    max-width: 500px; /* Adjust the width as needed */
+                    margin: 0 auto;
+                }
+
+                .signup-container .form-group {
+                    margin-bottom: 20px;
+                }
+
+                .signup-container label {
+                    display: block;
+                    font-weight: bold;
+                }
+
+                .signup-container input[type="text"],
+                .signup-container input[type="email"],
+                .signup-container input[type="password"] {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ced4da;
+                    border-radius: 5px;
+                }
+
+                .signup-container button {
+                    display: block;
+                    width: 100%;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 5px;
+                    background-color: #007bff;
+                    color: #fff;
+                    cursor: pointer;
+                }
+
+                    .signup-container button:hover {
+                        background-color: #0056b3;
+                    }
+
+            .signup-page {
+                padding-top: 50px; /* Adjust this value to create space between the navbar and the signup form */
+                background-color: #f8f9fa;
+            }
+
+            .signup-container {
+                max-width: 500px; /* Adjust the width as needed */
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
+                background-color: #fff;
+            }
+        </style>

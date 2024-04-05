@@ -1,0 +1,38 @@
+﻿@model SaveYourMoney_MVC.ViewModels.EditCategoryViewModel
+
+@{
+    ViewData["Title"] = "Edit Category";
+    @*@Html.HiddenFor(vm => vm.OldCategoryName)*@
+}
+
+<h1>Edit Category</h1>
+<hr>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+<form asp-action="EditCategory" method="post">
+    <input type="hidden" name="OldCategoryName" value="@Model.OldCategoryName" />
+
+    <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+    <div class="form-group">
+        <label for="newCategoryName">New Category Name</label>
+        <input type="text" class="form-control" id="newCategoryName" name="newCategoryName" value="@Model.NewCategoryName" />
+        @Html.ValidationMessageFor(model => model.NewCategoryName, "", new { @class = "text-danger" })
+
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Category" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <script>document.getElementById('editCategoryForm').addEventListener('submit', function (event) {
+            var oldCategoryName = document.getElementById('oldCategoryName').value;
+            var newCategoryName = document.getElementById('newCategoryName').value;
+
+            if (oldCategoryName === newCategoryName) {
+                alert('New category name must be different from the old category name.');
+                event.preventDefault(); // Prevent form submission
+            }
+        });</script>
+}
