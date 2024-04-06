@@ -91,7 +91,7 @@ namespace SaveYourMoney_MVC.Controllers
                 var userId = GetCurrentUserId();
 
                 AddNewlyCreatedBudget(addANewBudgetViewModel, userId);
-                return View("Budgets");
+                return RedirectToAction("Budgets");
 
             }
             catch (Exception ex)

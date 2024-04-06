@@ -4,9 +4,16 @@ using SaveYourMoney_MVC.Models;
 
 namespace SaveYourMoney_MVC.ViewModels
 {
-	public class AddAnExpenseViewModel
+    public enum ExpenseType
+    {
+        //income = 0, expense = 1
+        Income,
+        Expense
+    }
+    public class AddAnExpenseViewModel
 	{
 		public string ExpenseTitle { get; set; }
+		public ExpenseType ExpenseType { get; set; }
 		public double Amount { get; set; }
 		public List<SelectListItem> Categories { get; set; }
 		public int SelectedCategoryId { get; set; }

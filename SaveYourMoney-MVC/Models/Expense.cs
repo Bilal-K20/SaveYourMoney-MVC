@@ -6,6 +6,7 @@ namespace SaveYourMoney_MVC.Models
 {
     public enum TransactionType
     {
+        //income = 0, expense = 1
         Income,
         Expense
     }

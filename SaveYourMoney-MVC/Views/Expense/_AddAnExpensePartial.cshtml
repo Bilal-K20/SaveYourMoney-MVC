@@ -1,51 +1,166 @@
 ﻿@model SaveYourMoney_MVC.ViewModels.AddAnExpenseViewModel
-
-
 <!-- Add Expense Form -->
-<form id="addExpenseForm" method="post">
+<form asp-action="AddExpense" asp-controller="Expense" id="addExpenseForm" method="post">
     <div class="form-group">
         <label asp-for="ExpenseTitle"></label>
-        <input asp-for="ExpenseTitle" class="form-control" />
-        <span asp-validation-for="ExpenseTitle" class="text-danger"></span>
+        <input asp-for="ExpenseTitle" class="form-control" id="expenseTitle" />
+        <span class="text-danger" id="titleError"></span>
     </div>
     <div class="form-group">
         <label asp-for="ExpenseDescription"></label>
-        <textarea asp-for="ExpenseDescription" class="form-control"></textarea>
-        <span asp-validation-for="ExpenseDescription" class="text-danger"></span>
+        <textarea asp-for="ExpenseDescription" class="form-control" id="expenseDescription"></textarea>
+        <span class="text-danger" id="descriptionError"></span>
     </div>
     <div class="form-group">
         <label asp-for="Amount"></label>
-        <input asp-for="Amount" class="form-control" />
-        <span asp-validation-for="Amount" class="text-danger"></span>
+        <input asp-for="Amount" class="form-control" id="expenseAmount" />
+        <span class="text-danger" id="amountError"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Categories"></label>
-        <select asp-for="SelectedCategoryId" asp-items="@Model.Categories" class="form-control">
+        <label asp-for="Categories" data-toggle="tooltip" title="Adding a category can help with budget tracking and analytics."></label>
+        <select asp-for="SelectedCategoryId" asp-items="@Model.Categories" class="form-control" id="expenseCategory">
             <option value="">Select category</option>
         </select>
-        <span asp-validation-for="Categories" class="text-danger"></span>
+        <span class="text-danger" id="categoryError"></span>
     </div>
 
+    <div class="form-group">
+        <label>Would you like to add an attachment?</label>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="addAttachmentCheckbox">
+            <label class="form-check-label" for="addAttachmentCheckbox">Yes</label>
+        </div>
+    </div>
 
     <div class="form-group">
-        <label asp-for="AttachmentName"></label>
-        <input asp-for="AttachmentName" class="form-control" />
-        <span asp-validation-for="AttachmentName" class="text-danger"></span>
+        <label asp-for="ExpenseType"></label>
+        <select asp-for="ExpenseType" class="form-control" id="expenseType">
+            <option value="">Select Expense Type</option>
+            @foreach (var value in Enum.GetValues(typeof(ExpenseType)))
+                {
+                    <option value="@value">@value</option>
+                }
+
+        </select>
+        <span class="text-danger" id="typeError"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="AttachmentData"></label>
-        <input asp-for="AttachmentData" type="file" class="form-control" />
-        <span asp-validation-for="AttachmentData" class="text-danger"></span>
+
+    <div id="attachmentFields" style="display: none;">
+        <div class="form-group">
+            <label asp-for="AttachmentName"></label>
+            <input asp-for="AttachmentName" class="form-control" id="attachmentName" />
+            <span class="text-danger" id="attachmentError"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="AttachmentData"></label>
+            <input asp-for="AttachmentData" type="file" class="form-control" id="attachmentData" accept=".pdf, image/*"/>
+            <span class="text-danger" id="fileError"></span>
+        </div>
     </div>
+
     <div class="form-group">
         <label asp-for="Date"></label>
-        <input asp-for="Date" type="date" class="form-control" />
-        <span asp-validation-for="Date" class="text-danger"></span>
+        <input asp-for="Date" type="date" class="form-control" id="expenseDate" />
+        <span class="text-danger" id="dateError"></span>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
+
 </form>
 
+<!-- Display success message -->
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <div class="alert alert-success">
+        <strong>Success!</strong> @ViewBag.SuccessMessage
+    </div>
+}
+
+<script>$(document).ready(function () {
+        $('#addAttachmentCheckbox').change(function () {
+            if ($(this).is(':checked')) {
+                $('#attachmentFields').show();
+            } else {
+                $('#attachmentFields').hide();
+            }
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Set default value for the date field to today's date
+        var today = new Date().toISOString().slice(0, 10);
+        $('#expenseDate').val(today);
+
+        // Form submission validation
+        $('#addExpenseForm').submit(function (e) {
+            var valid = true;
+
+            // Validate Title
+            var title = $('#expenseTitle').val();
+            if (!/^[a-zA-Z0-9\s]+$/.test(title)) {
+                $('#titleError').text('Title can only contain letters and numbers.');
+                $('#expenseTitle').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#titleError').text('');
+                $('#expenseTitle').removeClass('is-invalid');
+            }
+
+            // Validate Description
+            var description = $('#expenseDescription').val();
+            // Check for SQL injection prevention here
+            // Example: You can use a library like OWASP Java Encoder or AntiSamy to sanitize input
+            $('#descriptionError').text('');
+            $('#expenseDescription').removeClass('is-invalid');
+
+            // Validate Amount
+            var amount = $('#expenseAmount').val();
+            if (!/^\d+(\.\d{1,2})?$/.test(amount)) {
+                $('#amountError').text('Amount can only be up to two decimal places.');
+                $('#expenseAmount').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#amountError').text('');
+                $('#expenseAmount').removeClass('is-invalid');
+            }
+
+            // Validate Expense Type
+            var expenseType = $('#expenseType').val();
+            if (!expenseType) {
+                $('#typeError').text('Please select an expense type.');
+                valid = false;
+            } else {
+                $('#typeError').text('');
+            }
+
+            // Validate Attachment Name
+            var attachmentName = $('#attachmentName').val();
+            if ($('#addAttachmentCheckbox').is(':checked') && !/^[a-zA-Z0-9\s]+$/.test(attachmentName)) {
+                $('#attachmentError').text('Attachment name can only contain letters and numbers.');
+                $('#attachmentName').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#attachmentError').text('');
+                $('#attachmentName').removeClass('is-invalid');
+            }
+
+            // Validate Date
+            var date = $('#expenseDate').val();
+            if (date !== today) {
+                $('#dateError').text('Date must be today\'s date.');
+                $('#expenseDate').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#dateError').text('');
+                $('#expenseDate').removeClass('is-invalid');
+            }
+
+            // If any field is invalid, prevent form submission
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    });</script>
 
 
 <!--<form asp-action="AddExpense" asp-controller="Expense" method="post">-->

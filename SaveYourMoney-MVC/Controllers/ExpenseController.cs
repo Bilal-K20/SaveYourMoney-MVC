@@ -96,6 +96,8 @@ namespace SaveYourMoney_MVC.Controllers
                 // For example:
                 // expenseService.AddExpense(model);
 
+                ViewBag.SuccessMessage = "Expense has been successfully created.";
+
                 // Redirect to another action after successful submission
                 return RedirectToAction("Index", "Home");
             }
@@ -105,7 +107,9 @@ namespace SaveYourMoney_MVC.Controllers
                 // Repopulate Categories in case of redisplaying the form
 
                 model.Categories = GetCategories(UserId);
-                return View("ViewExpenses");
+
+
+                return RedirectToAction("ViewExpenses");
             }
         }
 
