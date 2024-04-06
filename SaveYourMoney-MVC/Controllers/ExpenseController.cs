@@ -87,6 +87,7 @@ namespace SaveYourMoney_MVC.Controllers
         // POST: Expense/AddExpense
         [Authorize]
         [HttpPost]
+        //might need to use IFormFile to handle the document attached
         public IActionResult AddExpense(AddAnExpenseViewModel model)
         {
             // Check model validity

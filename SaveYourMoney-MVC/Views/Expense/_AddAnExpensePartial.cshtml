@@ -1,19 +1,19 @@
 ﻿@model SaveYourMoney_MVC.ViewModels.AddAnExpenseViewModel
 <!-- Add Expense Form -->
-<form asp-action="AddExpense" asp-controller="Expense" id="addExpenseForm" method="post">
+<form asp-action="AddExpense" asp-controller="Expense" id="addExpenseForm" enctype="multipart/form-data" method="post">
     <div class="form-group">
-        <label asp-for="ExpenseTitle"></label>
-        <input asp-for="ExpenseTitle" class="form-control" id="expenseTitle" />
+        <label asp-for="ExpenseTitle">Expense Title</label>
+        <input asp-for="ExpenseTitle" class="form-control" id="expenseTitle" required/>
         <span class="text-danger" id="titleError"></span>
     </div>
     <div class="form-group">
-        <label asp-for="ExpenseDescription"></label>
+        <label asp-for="ExpenseDescription">Description</label>
         <textarea asp-for="ExpenseDescription" class="form-control" id="expenseDescription"></textarea>
         <span class="text-danger" id="descriptionError"></span>
     </div>
     <div class="form-group">
         <label asp-for="Amount"></label>
-        <input asp-for="Amount" class="form-control" id="expenseAmount" />
+        <input asp-for="Amount" class="form-control" id="expenseAmount" required/>
         <span class="text-danger" id="amountError"></span>
     </div>
 
@@ -34,34 +34,35 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="ExpenseType"></label>
-        <select asp-for="ExpenseType" class="form-control" id="expenseType">
+        <label asp-for="ExpenseType" data-toggle="tooltip" title="Please select if the transaction is an income or an expense">Expense Type</label>
+        <select asp-for="ExpenseType" class="form-control" id="expenseType" required>
             <option value="">Select Expense Type</option>
-            @foreach (var value in Enum.GetValues(typeof(ExpenseType)))
-                {
-                    <option value="@value">@value</option>
-                }
 
+            @foreach (var value in Enum.GetValues(typeof(ExpenseType)))
+            {
+                <option value="@value">@value</option>
+            }
         </select>
         <span class="text-danger" id="typeError"></span>
     </div>
 
+
     <div id="attachmentFields" style="display: none;">
         <div class="form-group">
-            <label asp-for="AttachmentName"></label>
+            <label asp-for="AttachmentName">Attachment Title</label>
             <input asp-for="AttachmentName" class="form-control" id="attachmentName" />
             <span class="text-danger" id="attachmentError"></span>
         </div>
         <div class="form-group">
-            <label asp-for="AttachmentData"></label>
-            <input asp-for="AttachmentData" type="file" class="form-control" id="attachmentData" accept=".pdf, image/*"/>
+            <label asp-for="AttachmentData" data-toggle="tooltip" title="Please insert an img or pdf document!">Attachment</label>
+            <input asp-for="AttachmentData" type="file" class="form-control" id="attachmentData" accept=".pdf, .xsls,image/*" />
             <span class="text-danger" id="fileError"></span>
         </div>
     </div>
 
     <div class="form-group">
         <label asp-for="Date"></label>
-        <input asp-for="Date" type="date" class="form-control" id="expenseDate" />
+        <input asp-for="Date" type="date" class="form-control" id="expenseDate" required/>
         <span class="text-danger" id="dateError"></span>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
@@ -115,8 +116,9 @@
 
             // Validate Amount
             var amount = $('#expenseAmount').val();
-            if (!/^\d+(\.\d{1,2})?$/.test(amount)) {
-                $('#amountError').text('Amount can only be up to two decimal places.');
+            var parsedAmount = parseFloat(amount);
+            if (isNaN(parsedAmount) || parsedAmount <= 0 || !/^\d+(\.\d{1,2})?$/.test(amount)) {
+                $('#amountError').text('Amount must be a valid positive number with up to two decimal places.');
                 $('#expenseAmount').addClass('is-invalid');
                 valid = false;
             } else {

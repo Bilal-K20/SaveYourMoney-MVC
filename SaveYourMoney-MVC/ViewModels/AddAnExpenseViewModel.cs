@@ -20,7 +20,9 @@ namespace SaveYourMoney_MVC.ViewModels
         public string ExpenseDescription { get; set; }
 		public DateTime Date { get; set; }
         public string AttachmentName { get; set; }
-        public byte[] AttachmentData { get; set; }
+        //public byte[] AttachmentData { get; set; }
+        public IFormFile AttachmentData { get; set; }
+
 
     }
 }
