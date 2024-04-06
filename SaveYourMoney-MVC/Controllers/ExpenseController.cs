@@ -120,50 +120,10 @@ namespace SaveYourMoney_MVC.Controllers
                 selectlistItem.Add(new SelectListItem { Value = category.CategoryId.ToString(), Text = category.CategoryName });
             }
             return selectlistItem;
-            // For demonstration, just returning a hardcoded list
-            //return new List<SelectListItem>
-            //{
-            //    new SelectListItem { Value = "1", Text = "Category 1" },
-            //    new SelectListItem { Value = "2", Text = "Category 2" },
-            //    new SelectListItem { Value = "3", Text = "Category 3" }
-            //};
+     
         }
 
-        //public IActionResult ViewExpenses(string searchString)
-        //{
-        //    string customerId;
-
-        //    //get user Id from the session
-        //    var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
-        //    if (customerIdClaim != null)
-        //    {
-        //        customerId = customerIdClaim.Value;
-        //        HttpContext.Session.SetInt32("CustomerId", Convert.ToInt32(customerIdClaim.Value));
-
-        //        // Use customerId as needed
-        //    }
-        //    var userId = Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
-
-        //    List<Expense> list = new List<Expense>();
-
-        //    var expenses = ExpenseManager.GetAllExpenses(userId);
-        //    var categories = CategoryManager.GetCategories(userId);
-
-        //    if (string.IsNullOrEmpty(searchString))
-        //    {
-        //        list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
-        //    }
-        //    else
-        //    {
-        //        list = ExpenseManager.GetExpenseBySearch(userId, searchString);
-        //    }
-
-        //    var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses };
-
-
-
-        //    return View(list);
-        //}
+  
     }
 }
 
