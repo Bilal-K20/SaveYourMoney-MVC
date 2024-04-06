@@ -30,6 +30,28 @@ namespace SaveYourMoney_MVC.Controllers
         [Authorize]
         public IActionResult ViewExpenses()
         {
+            int userId = GetUserIdFromSession();
+            UserId = userId;
+
+            List<Expense> list = new List<Expense>();
+
+            var expenses = ExpenseManager.GetAllExpenses(userId);
+            var categories = CategoryManager.GetCategories(userId);
+
+
+            list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
+
+
+
+            var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses };
+
+
+
+            return View(expenseViewModel);
+        }
+
+        private int GetUserIdFromSession()
+        {
             string customerId;
 
             //get user Id from the session
@@ -42,37 +64,28 @@ namespace SaveYourMoney_MVC.Controllers
                 // Use customerId as needed
             }
             var userId = Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
-            UserId = userId;
-
-            List<Expense> list = new List<Expense>();
-
-            var expenses = ExpenseManager.GetAllExpenses(userId);
-            var categories = CategoryManager.GetCategories(userId);
-
-            
-                list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
-            
-          
-
-            var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses};
-
-
-
-            return View(expenseViewModel);
+            return userId;
         }
 
         // GET: Expense/AddExpense
+        [Authorize]
+        [HttpGet]
         public IActionResult AddExpense()
         {
-
+            var userId = GetUserIdFromSession();
 
             var viewModel = new AddAnExpenseViewModel();
+
+            var addExpenseViewModel = new AddAnExpenseViewModel(); // Assuming you have a constructor or method to initialize the model
             // Populate Categories here
-            viewModel.Categories = GetCategories(UserId); // You would replace this with your actual data retrieval logic
-            return PartialView("_AddAnExpense", viewModel);
+            addExpenseViewModel.Categories = GetCategories(userId); // You would replace this with your actual data retrieval logic
+            //return View(viewModel);
+            return PartialView("_AddAnExpensePartial", addExpenseViewModel);
+
         }
 
         // POST: Expense/AddExpense
+        [Authorize]
         [HttpPost]
         public IActionResult AddExpense(AddAnExpenseViewModel model)
         {
@@ -90,8 +103,9 @@ namespace SaveYourMoney_MVC.Controllers
             {
                 // Model is invalid, return the partial view with validation errors
                 // Repopulate Categories in case of redisplaying the form
+
                 model.Categories = GetCategories(UserId);
-                return PartialView("_AddAnExpensePartial", model);
+                return View("ViewExpenses");
             }
         }
 

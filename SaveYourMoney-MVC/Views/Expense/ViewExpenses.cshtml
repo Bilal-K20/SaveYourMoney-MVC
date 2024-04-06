@@ -1,4 +1,5 @@
 ﻿@model SaveYourMoney_MVC.ViewModels.ExpenseViewModel
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,22 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Expense Management</title>
     <!-- Include Bootstrap CSS -->
+    
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Expense Management</h1>
 
         @if (Model.Expenses == null || Model.Expenses.Count() == 0)
-        {
+            {
             <div class="alert alert-warning" role="alert">
                 Sorry, you haven't created any expenses yet. Please create one.
             </div>
-            <button type="button" class="btn btn-primary mb-4" id="addExpenseButton">
-                Add an Expense
-            </button>
-        }
-        else
-        {
+            <!-- Add an Expense button -->
+            @*<button href="AddExpense" asp-controller="Expense" asp-action="AddExpense" class="btn btn-primary mb-4" id="addExpenseButton">Add an Expense</button>*@
+
+            <button asp-controller="Expense" asp-action="AddExpense" class="btn btn-primary mb-4" id="addExpenseButton" data-bs-toggle="modal" data-bs-target="#addExpenseModal" data-url="@Url.Action("AddExpense", "Expense")">Add an Expense</button>
+            }
+            else
+            {
             <!-- Table to display expenses -->
             <div class="row mb-3">
                 <div class="col-auto">
@@ -43,57 +46,66 @@
                 </thead>
                 <tbody id="expenseTableBody">
                     @foreach (var expense in Model.Expenses)
-                    {
+                        {
                         <tr>
                             <td>@expense.ExpenseTitle</td>
                             <td>@expense.Description</td>
                             <td>@expense.Amount.ToString("C")</td>
                             <td>@expense.Date.ToShortDateString()</td>
                         </tr>
-                    }
+                        }
                 </tbody>
             </table>
-        }
+            }
     </div>
 
-    <!-- Add Expense Modal -->
+     Add Expense Modal 
     <div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addExpenseModalLabel">Add an Expense</h5>
+                    <h5 class="modal-title" id="addExpenseModalLabel">Add New Expense</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-      
-                    @*<partial name="_AddAnExpense" model="Model">*@
-
+                <div class="modal-body" id="addExpenseModalBody">
+                     Add Expense Form will be loaded here dynamically 
                 </div>
             </div>
         </div>
     </div>
 
-
-    <!-- Include jQuery and Bootstrap JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 
     <script>
-
-        console.log("Hello World!");
-        document.getElementById('filterButton').addEventListener('click', function () {
-            var selectedDate = document.getElementById('datePicker').value;
-            console.log('Selected Date:', selectedDate);
+        $(document).ready(function () {
+            console.log("js works");
+            $('#addExpenseButton').click(function () {
+                console.log("add expense on click triggered");
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#addExpenseModal .modal-body').html(data);
+                    $('#addExpenseModal').modal('show');
+                });
+            });
         });
+        @*// Wait for the DOM to be fully loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Select the modal element
+            var addExpenseModal = document.getElementById('addExpenseModal');
 
-        //document.getElementById('addExpenseButton').addEventListener('click', function () {
-        //    // Load the modal content using AJAX
-        //    $.get('@@Url.Action("AddExpense", "Expense")', function (data) {
-        //        // Inject the modal content into the modal body
-        //        $('.modal-body').html(data);
-
-        //        // Show the modal
-        //        $('#addExpenseModal').modal('show');
-        //    });
-        //});</script>
+            // Add an event listener for when the modal is shown
+            addExpenseModal.addEventListener('show.bs.modal', function () {
+                console.log("Attempting to add the expense form into the body");
+                // Make the AJAX request to load the content into the modal body
+                fetch('@Url.Action("AddExpense", "Expense")')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('addExpenseModalBody').innerHTML = data;
+                    })
+                    .catch(error => console.error('Error loading content:', error));
+            });
+        });*@
+    </script>
 </body>
 </html>
