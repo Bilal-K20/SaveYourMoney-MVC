@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SaveYourMoney_MVC.BusinessLogic;
 using SaveYourMoney_MVC.Models;
 using SaveYourMoney_MVC.ViewModels;
@@ -107,7 +108,7 @@ namespace SaveYourMoney_MVC.Controllers
             ViewBag.SuccessMessage = "Expense has been successfully created.";
 
             // Redirect to another action after successful submission
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("ViewExpenses", "Expense");
             }
             else
             {
@@ -120,6 +121,29 @@ namespace SaveYourMoney_MVC.Controllers
                 return RedirectToAction("ViewExpenses");
             }
         }
+
+        //public IActionResult FilterExpenses(string date, string type)
+        //{
+        //    var expenses = _context.Expenses.Include(e => e.Category).AsQueryable();
+
+        //    if (!string.IsNullOrEmpty(date))
+        //    {
+        //        expenses = expenses.Where(e => e.Date == DateTime.Parse(date));
+        //    }
+
+        //    if (!string.IsNullOrEmpty(type))
+        //    {
+        //        expenses = expenses.Where(e => e.Type == type);
+        //    }
+
+        //    var model = new ExpenseViewModel
+        //    {
+        //        Expenses = expenses.ToList(),
+        //        Categories = _context.Categories.ToList()
+        //    };
+
+        //    return PartialView("_ExpenseTablePartial", model);
+        //}
 
         // Dummy method to simulate category retrieval
         private List<SelectListItem> GetCategories(int userId)

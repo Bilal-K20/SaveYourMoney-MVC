@@ -157,8 +157,8 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
                         // Validate Date
                         var currentDate = DateTime.Today;
-                        var minDate = currentDate.AddYears(-1); // One year ago
-                        var maxDate = currentDate.AddYears(2); // Two years in the future
+                        var minDate = currentDate.AddYears(-2); // One year ago
+                        var maxDate = currentDate.AddYears(3); // Two years in the future
 
                         if (model.Date < minDate || model.Date > maxDate)
                         {

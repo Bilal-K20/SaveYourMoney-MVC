@@ -147,9 +147,19 @@
             }
 
             // Validate Date
-            var date = $('#expenseDate').val();
-            if (date !== today) {
-                $('#dateError').text('Date must be today\'s date.');
+            var today = new Date();
+            var date = new Date($('#expenseDate').val());
+            var twoYearsAgo = new Date(today);
+            twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+            var threeYearsAhead = new Date(today);
+            threeYearsAhead.setFullYear(threeYearsAhead.getFullYear() + 3);
+
+            if (date < twoYearsAgo) {
+                $('#dateError').text('Date must be within the last 2 years.');
+                $('#expenseDate').addClass('is-invalid');
+                valid = false;
+            } else if (date > threeYearsAhead) {
+                $('#dateError').text('Date cannot be more than 3 years ahead of today.');
                 $('#expenseDate').addClass('is-invalid');
                 valid = false;
             } else {

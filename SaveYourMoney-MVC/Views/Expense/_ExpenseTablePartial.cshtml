@@ -1,0 +1,52 @@
+﻿@model SaveYourMoney_MVC.ViewModels.ExpenseViewModel
+
+@if (Model.Expenses == null || !Model.Expenses.Any())
+{
+    <div class="container text-center py-5">
+        <h1 class="display-4">No existing expenses found!</h1>
+        <p class="lead">There are no expenses to show because you haven't created any.</p>
+        <a href="AddExpense" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#addExpenseModal">Add a new expense</a>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Expense Title</th>
+                    <th>Type Of Transaction</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Attatched Document Title</th>
+                    <th>Document</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var expense in Model.Expenses)
+                {
+                    <tr>
+                        <td>@expense.ExpenseTitle</td>
+                        <td>@expense.Type</td>
+                        <td>@expense.Description</td>
+                        <td>@Html.Raw(expense.Amount.ToString("C", System.Globalization.CultureInfo.CurrentCulture))</td>
+                        <td>@Model.Categories.FirstOrDefault(c => c.CategoryId == expense.CategoryId)?.CategoryName</td>
+                        <td>@expense.Date.ToShortDateString()</td>
+                        <td>@expense.AttachmentFileName</td>
+                        <td>@expense.AttachmentData</td>
+                        <td>
+                            <a asp-controller="Expense" asp-action="EditExpense" asp-route-expenseId="@expense.ExpenseId" class="btn btn-primary">Edit</a>
+                            <form asp-controller="Expense" asp-action="DeleteExpense" method="post" style="display: inline;">
+                                <input type="hidden" name="expenseId" value="@expense.ExpenseId" />
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this expense?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
