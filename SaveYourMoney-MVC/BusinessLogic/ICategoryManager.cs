@@ -6,7 +6,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
 {
 	public interface ICategoryManager
 	{
-        List<Category> GetCategories();
+        //List<Category> GetCategories();
         // this makes more sense because it will only get the categories for that one particular customer.
         List<Category> GetCategories(int customerId);
         void AddCategory(int? customerId, string categoryName);

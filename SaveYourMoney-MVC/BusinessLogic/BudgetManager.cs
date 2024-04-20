@@ -61,7 +61,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
             try
             {
                 
-                 budgets = _dbContext.Budgets.ToList();
+                 budgets = _dbContext.Budgets.Where(b => b.CustomerId == customerId).ToList();
 
             }
             catch (Exception ex)

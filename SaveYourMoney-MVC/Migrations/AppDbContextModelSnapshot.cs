@@ -109,16 +109,13 @@ namespace SaveYourMoney_MVC.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<byte[]>("AttachmentData")
-                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("AttachmentFileName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
@@ -127,7 +124,6 @@ namespace SaveYourMoney_MVC.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ExpenseTitle")

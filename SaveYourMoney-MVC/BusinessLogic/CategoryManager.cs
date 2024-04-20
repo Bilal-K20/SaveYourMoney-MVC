@@ -16,11 +16,26 @@ namespace SaveYourMoney_MVC.BusinessLogic
             _dbContext = dbContext;
 		}
 
-        public List<Category> GetCategories()
-        {
-            var categories = _dbContext.Categories.ToList();
+        //public List<Category> GetCategories()
+        //{
+        //    var categories = _dbContext.Categories.ToList();
 
+        //    return categories;
+        //}
+
+        public List<Category> GetCategories(int customerId)
+        {
+            List<Category>? categories = new List<Category>();
+            try
+            {
+                categories = _dbContext.Categories.Where(x => x.CustomerId == customerId).ToList();
+            }
+            catch (Exception ex)
+            {
+                var e = ex.Message;
+            }
             return categories;
+
         }
 
         public void AddCategory(int? customerId, string categoryName)
@@ -46,22 +61,6 @@ namespace SaveYourMoney_MVC.BusinessLogic
                var error = ex.Message;
             }
  
-        }
-
-
-        public List<Category> GetCategories(int customerId)
-        {
-            List<Category>? categories = new List<Category>();
-            try
-            {
-                categories = _dbContext.Categories.Where(x => x.CustomerId == customerId).ToList();
-            }
-            catch (Exception ex)
-            {
-                var e = ex.Message;
-            }
-            return categories;
-
         }
 
         public Category GetCategoryByCategoryId(int? customerId , int categoryId)

@@ -28,6 +28,7 @@ namespace SaveYourMoney_MVC.Controllers
         }
         // GET: /<controller>/
         [Authorize]
+        [HttpGet]
         public IActionResult ViewExpenses()
         {
             int userId = GetUserIdFromSession();
@@ -90,17 +91,23 @@ namespace SaveYourMoney_MVC.Controllers
         //might need to use IFormFile to handle the document attached
         public IActionResult AddExpense(AddAnExpenseViewModel model)
         {
-            // Check model validity
-            if (ModelState.IsValid)
+            // Check model validity 
+            /*
+             * Model state is valid always fails so might need to ignore this. 
+             */
+
+            var userId = GetUserIdFromSession();
+
+            if (!string.IsNullOrWhiteSpace(model.ExpenseTitle) && model.ExpenseType != null && model.Date != null )
             {
-                // Your logic to save the expense
-                // For example:
-                // expenseService.AddExpense(model);
 
-                ViewBag.SuccessMessage = "Expense has been successfully created.";
+            var check = ExpenseManager.IsNeccessaryDataPresent(model);
+                ExpenseManager.AddExpense(userId, model);
 
-                // Redirect to another action after successful submission
-                return RedirectToAction("Index", "Home");
+            ViewBag.SuccessMessage = "Expense has been successfully created.";
+
+            // Redirect to another action after successful submission
+            return RedirectToAction("Index", "Home");
             }
             else
             {

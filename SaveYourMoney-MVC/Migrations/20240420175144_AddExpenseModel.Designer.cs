@@ -11,8 +11,8 @@ using SaveYourMoney_MVC.Repositories;
 namespace SaveYourMoney_MVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240330174130_RecreateExpenseTable")]
-    partial class RecreateExpenseTable
+    [Migration("20240420175144_AddExpenseModel")]
+    partial class AddExpenseModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -111,16 +111,13 @@ namespace SaveYourMoney_MVC.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<byte[]>("AttachmentData")
-                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("AttachmentFileName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
@@ -129,7 +126,6 @@ namespace SaveYourMoney_MVC.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ExpenseTitle")

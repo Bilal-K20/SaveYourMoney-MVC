@@ -1,11 +1,12 @@
 ﻿using System;
 using SaveYourMoney_MVC.Models;
+using SaveYourMoney_MVC.ViewModels;
 
 namespace SaveYourMoney_MVC.BusinessLogic
 {
 	public interface IExpenseManager
 	{
-		IEnumerable<Expense> GetAllExpenses(int customerId);
+		List<Expense> GetAllExpenses(int customerId);
 
 		Expense GetExpenseById(int customerId, int expenseId);
 
@@ -14,6 +15,9 @@ namespace SaveYourMoney_MVC.BusinessLogic
 		void UpdateExpense(int customerId, Expense expense);
 
 		bool DeleteExpense(int customerId, int expenseId);
-	}
+        bool IsNeccessaryDataPresent(AddAnExpenseViewModel model);
+
+		void AddExpense(int userId, AddAnExpenseViewModel model);
+    }
 }
 
