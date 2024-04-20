@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 using SaveYourMoney_MVC.Models;
 using SaveYourMoney_MVC.Repositories;
 using SaveYourMoney_MVC.ViewModels;
@@ -177,6 +178,38 @@ namespace SaveYourMoney_MVC.BusinessLogic
                 }
 
             return isAllDataValidated;
+        }
+
+        public ExpenseViewModel FilterExpenses(string date, string type)
+        {
+            var newViewModel = new ExpenseViewModel();
+            try
+            {
+                var expenses = _dbContext.Expenses.Include(e => e.Category).AsQueryable();
+
+                if (!string.IsNullOrEmpty(date))
+                {
+                    expenses = expenses.Where(e => e.Date == DateTime.Parse(date));
+                }
+
+                if (!string.IsNullOrEmpty(type))
+                {
+                    // Convert enum string to enum value
+                    var expenseType = Enum.Parse<TransactionType>(type);
+                    expenses = expenses.Where(e => e.Type == expenseType);
+                }
+
+                newViewModel.Expenses = expenses.ToList();
+
+                newViewModel.Categories = _dbContext.Categories.ToList();
+            }
+            catch (Exception ex)
+            {
+                var e = ex.Message;
+            }
+
+            return newViewModel;
+   
         }
 
         public IEnumerable<Expense> Search (string searchString)

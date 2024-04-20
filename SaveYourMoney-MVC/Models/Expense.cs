@@ -33,6 +33,9 @@ namespace SaveYourMoney_MVC.Models
         [ForeignKey("Category")]
         public int? CategoryId { get; set; }
 
+        public Category Category { get; set; } // Navigation property
+
+
         //mandatory
         [Required]
         public double Amount { get; set; }

@@ -122,28 +122,12 @@ namespace SaveYourMoney_MVC.Controllers
             }
         }
 
-        //public IActionResult FilterExpenses(string date, string type)
-        //{
-        //    var expenses = _context.Expenses.Include(e => e.Category).AsQueryable();
+        public IActionResult FilterExpenses(string date, string type)
+        {
+            var model = ExpenseManager.FilterExpenses(date, type);
 
-        //    if (!string.IsNullOrEmpty(date))
-        //    {
-        //        expenses = expenses.Where(e => e.Date == DateTime.Parse(date));
-        //    }
-
-        //    if (!string.IsNullOrEmpty(type))
-        //    {
-        //        expenses = expenses.Where(e => e.Type == type);
-        //    }
-
-        //    var model = new ExpenseViewModel
-        //    {
-        //        Expenses = expenses.ToList(),
-        //        Categories = _context.Categories.ToList()
-        //    };
-
-        //    return PartialView("_ExpenseTablePartial", model);
-        //}
+            return PartialView("_ExpenseTablePartial", model);
+        }
 
         // Dummy method to simulate category retrieval
         private List<SelectListItem> GetCategories(int userId)
