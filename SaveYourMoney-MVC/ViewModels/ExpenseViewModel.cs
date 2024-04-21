@@ -21,6 +21,11 @@ namespace SaveYourMoney_MVC.ViewModels
         public List<string> Months { get; internal set; }
 
 
-    }
+
+        public string FileName { get; set; }
+        public IFormFile AttahcedFile { get; set; }
+
+
+	}
 }
 

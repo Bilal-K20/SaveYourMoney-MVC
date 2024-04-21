@@ -35,9 +35,9 @@ else
                         <td>@Model.Categories.FirstOrDefault(c => c.CategoryId == expense.CategoryId)?.CategoryName</td>
                         <td>@expense.Date.ToShortDateString()</td>
                         <td>
-                            @if (!string.IsNullOrEmpty(expense.AttachmentFileName))
+                            @if (!string.IsNullOrEmpty(expense.AttachmentFileName) && expense.AttachmentData != null)
                             {
-                                <a href="javascript:void(0)" onclick="previewDocument('@expense.AttachmentFileName', '@expense.AttachmentData')">Preview</a>
+                                <a href="javascript:void(0)" onclick="previewDocument('@expense.AttachmentFileName', '@Convert.ToBase64String(expense.AttachmentData)')">Preview</a>
                             }
                             else
                             {
@@ -53,30 +53,38 @@ else
                         </td>
                     </tr>
                 }
+
             </tbody>
         </table>
     </div>
 }
 
-<script>function previewDocument(fileName, data) {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/file-type/16.6.1/file-type.min.js"></script>
+
+<script>async function previewDocument(fileName, data) {
         console.log("In previewDocument function");
         console.log("fileName:", fileName);
         console.log("data:", data);
 
-        var extension = fileName.split('.').pop().toLowerCase();
-        console.log("extension:", extension);
+        // Determine the file type based on the file signature
+        const extension = determineExtensionFromData(data);
 
-        if (extension === 'pdf') {
-            var blob = base64ToBlob(data, 'application/pdf');
-            console.log("blob:", blob);
-            var url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
-        } else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-            var imageUrl = "data:image/" + extension + ";base64," + data;
-            var imgWindow = window.open("");
-            imgWindow.document.write("<img src='" + imageUrl + "'/>");
+        if (extension) {
+            console.log("extension:", extension);
+
+            if (extension === 'pdf') {
+                var blob = base64ToBlob(data, 'application/pdf');
+                var url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            } else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+                var imageUrl = "data:image/" + extension + ";base64," + data;
+                var imgWindow = window.open("");
+                imgWindow.document.write("<img src='" + imageUrl + "'/>");
+            } else {
+                alert("Unsupported file type. Cannot preview this file.");
+            }
         } else {
-            alert("Unsupported file type. Cannot preview this file.");
+            alert("Invalid file. Cannot determine file type.");
         }
     }
 
@@ -98,5 +106,24 @@ else
 
         var blob = new Blob(byteArrays, { type: contentType });
         return blob;
+    }
+
+    function determineExtensionFromData(data) {
+        const signature = data.substring(0, 12); // Get the first 12 characters
+        switch (signature) {
+            case 'JVBERi0xLjYK': // PDF
+                return 'pdf';
+            case '/9j/4AAQSkZJRgA=': // JPEG
+                return 'jpg';
+            case 'iVBORw0KGgo=': // PNG
+                return 'png';
+            case 'R0lGODlhAQABAIAAAP': // GIF
+                return 'gif';
+            default:
+                return null;
+        }
     }</script>
+
+
+
 

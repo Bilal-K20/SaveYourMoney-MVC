@@ -42,6 +42,7 @@ namespace SaveYourMoney_MVC.Controllers
             var months = ExpenseManager.GetMonthsList();
 
 
+
             list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
 
 
@@ -53,22 +54,7 @@ namespace SaveYourMoney_MVC.Controllers
             return View(expenseViewModel);
         }
 
-        private int GetUserIdFromSession()
-        {
-            string customerId;
 
-            //get user Id from the session
-            var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
-            if (customerIdClaim != null)
-            {
-                customerId = customerIdClaim.Value;
-                HttpContext.Session.SetInt32("CustomerId", Convert.ToInt32(customerIdClaim.Value));
-
-                // Use customerId as needed
-            }
-            var userId = Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
-            return userId;
-        }
 
         // GET: Expense/AddExpense
         [Authorize]
@@ -128,6 +114,23 @@ namespace SaveYourMoney_MVC.Controllers
             var model = ExpenseManager.FilterExpenses(date, type, year, month);
 
             return PartialView("_ExpenseTablePartial", model);
+        }
+
+        private int GetUserIdFromSession()
+        {
+            string customerId;
+
+            //get user Id from the session
+            var customerIdClaim = User.Claims.FirstOrDefault(c => c.Type == "CustomerId");
+            if (customerIdClaim != null)
+            {
+                customerId = customerIdClaim.Value;
+                HttpContext.Session.SetInt32("CustomerId", Convert.ToInt32(customerIdClaim.Value));
+
+                // Use customerId as needed
+            }
+            var userId = Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
+            return userId;
         }
 
         // Dummy method to simulate category retrieval
