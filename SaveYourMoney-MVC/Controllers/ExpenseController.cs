@@ -39,13 +39,14 @@ namespace SaveYourMoney_MVC.Controllers
 
             var expenses = ExpenseManager.GetAllExpenses(userId);
             var categories = CategoryManager.GetCategories(userId);
+            var months = ExpenseManager.GetMonthsList();
 
 
             list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
 
 
 
-            var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses };
+            var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses, Months = months};
 
 
 
@@ -122,9 +123,9 @@ namespace SaveYourMoney_MVC.Controllers
             }
         }
 
-        public IActionResult FilterExpenses(string date, string type)
+        public IActionResult FilterExpenses(string date, string type, int? year, string? month)
         {
-            var model = ExpenseManager.FilterExpenses(date, type);
+            var model = ExpenseManager.FilterExpenses(date, type, year, month);
 
             return PartialView("_ExpenseTablePartial", model);
         }

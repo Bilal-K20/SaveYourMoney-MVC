@@ -18,8 +18,8 @@ namespace SaveYourMoney_MVC.ViewModels
 		// list of categories not sure if i should use ienumerable or list 
 		public IEnumerable<Category> Categories { get; set; }
 		public IEnumerable<Expense> Expenses { get; set; }
+        public List<string> Months { get; internal set; }
 
-        //property to attach an attachment such as an image/receipt/pdf  
 
     }
 }

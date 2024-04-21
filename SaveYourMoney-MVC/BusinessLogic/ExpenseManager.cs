@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
@@ -192,7 +193,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
             return isAllDataValidated;
         }
 
-        public ExpenseViewModel FilterExpenses(string date, string type)
+        public ExpenseViewModel FilterExpenses(string date, string type, int? year, string? month)
         {
             var newViewModel = new ExpenseViewModel();
             try
@@ -206,14 +207,27 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
                 if (!string.IsNullOrEmpty(type))
                 {
-                    // Convert enum string to enum value
                     var expenseType = Enum.Parse<TransactionType>(type);
                     expenses = expenses.Where(e => e.Type == expenseType);
                 }
 
-                newViewModel.Expenses = expenses.ToList();
+                if (year.HasValue)
+                {
+                    expenses = expenses.Where(e => e.Date.Year == year);
+                }
 
-                newViewModel.Categories = _dbContext.Categories.ToList();
+                if (!string.IsNullOrEmpty(month))
+                {
+                    var selectedMonth = DateTime.ParseExact(month, "MMMM", CultureInfo.InvariantCulture);
+                    expenses = expenses.Where(e => e.Date.Month == selectedMonth.Month);
+                }
+
+                return new ExpenseViewModel
+                {
+                    Expenses = expenses.ToList(),
+                    Categories = _dbContext.Categories.ToList(),
+                    Months = GetMonthsList() // Return the list of months
+                };
             }
             catch (Exception ex)
             {
@@ -254,6 +268,18 @@ namespace SaveYourMoney_MVC.BusinessLogic
          * The idea is that someone could be saving up for a house or someone could use it to predict financial status in future
          */
 
+
+        public List<string> GetMonthsList()
+        {
+            // Get the list of months in alphabetical order
+            return DateTimeFormatInfo
+                .InvariantInfo
+                .MonthNames
+                .Where(m => !string.IsNullOrEmpty(m))
+                .OrderBy(m => m)
+                .ToList();
+        }
+
         private bool IsDateValid (DateTime date)
         {
             var today = DateTime.Today;
@@ -268,7 +294,8 @@ namespace SaveYourMoney_MVC.BusinessLogic
                 return false;
             }
         }
-        
+
+
     }
 }
 

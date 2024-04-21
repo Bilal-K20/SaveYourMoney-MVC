@@ -27,6 +27,21 @@
                 </select>
             </div>
             <div class="col-auto">
+                <label for="yearFilter" class="form-label">Filter by Year:</label>
+                <input type="number" id="yearFilter" class="form-control" min="0" max="9999" placeholder="Year">
+                <div id="yearError" class="invalid-feedback"></div>
+            </div>
+            <div class="col-auto">
+                <label for="monthFilter" class="form-label">Filter by Month:</label>
+                <select id="monthFilter" class="form-select">
+                    <option value="">All</option>
+                    @foreach (var month in Model.Months)
+                    {
+                        <option value="@month">@month</option>
+                    }
+                </select>
+            </div>
+            <div class="col-auto">
                 <button id="filterButton" class="btn btn-primary mt-4">Filter</button>
             </div>
             <div class="col-auto">
@@ -61,26 +76,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#filterButton').click(function () {
-                var date = $('#datePicker').val();
-                var type = $('#typeFilter').val();
-                filterExpenses(date, type);
+            // Filter expenses as the user types
+            $('#datePicker, #typeFilter, #yearFilter, #monthFilter').on('change keyup', function () {
+                filterExpenses();
             });
 
-            $('#datePicker').keypress(function (e) {
-                if (e.which == 13) {
-                    var date = $(this).val();
-                    var type = $('#typeFilter').val();
-                    filterExpenses(date, type);
-                }
-            });
-
-            $('#typeFilter').change(function () {
-                var date = $('#datePicker').val();
-                var type = $(this).val();
-                filterExpenses(date, type);
-            });
-
+            // Add Expense Modal
             $('#addExpenseModal').on('show.bs.modal', function (event) {
                 var modal = $(this);
                 var url = '@Url.Action("AddExpense", "Expense")';
@@ -88,15 +89,40 @@
             });
         });
 
-        function filterExpenses(date, type) {
+        function filterExpenses() {
+            var date = $('#datePicker').val();
+            var type = $('#typeFilter').val();
+            var year = $('#yearFilter').val();
+            var month = $('#monthFilter').val();
+
+            // Validate year
+            if (year !== "" && !validateYear(year)) {
+                $('#yearFilter').addClass('is-invalid');
+                $('#yearError').text('sorry I can only get data upto 50 years ago')
+                return;
+            } else {
+                $('#yearFilter').removeClass('is-invalid');
+                $('#yearError').text('');
+            }
+
             $.ajax({
                 url: '@Url.Action("FilterExpenses", "Expense")',
                 type: 'GET',
-                data: { date: date, type: type },
+                data: { date: date, type: type, year: year, month: month },
                 success: function (result) {
                     $('#expenseTable').html(result);
                 }
             });
+        }
+
+        function validateYear(year) {
+            var currentYear = new Date().getFullYear();
+            var inputYear = parseInt(year);
+
+            if (inputYear < 0 || inputYear < currentYear - 50) {
+                return false;
+            }
+            return true;
         }
     </script>
 </body>
