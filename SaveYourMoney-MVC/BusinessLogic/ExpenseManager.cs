@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using SaveYourMoney_MVC.Models;
@@ -26,6 +27,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
                         Expense newExpense = new Expense();
                         newExpense.CustomerId = userId;
                         newExpense.ExpenseTitle = model.ExpenseTitle;
+                        newExpense.Type = (TransactionType)model.ExpenseType;
                         newExpense.Description = model.ExpenseDescription;
 
                         newExpense.Date = model.Date;
@@ -33,8 +35,18 @@ namespace SaveYourMoney_MVC.BusinessLogic
                     // I am not sure why is set this as 
                         newExpense.CategoryId = model.SelectedCategoryId;
                         newExpense.Amount = model.Amount;
-                        newExpense.AttachmentFileName = model.AttachmentName;
-                    //newExpense.AttachmentData = model.AttachmentData;
+
+
+                    // Handle attachment - code according to MS documentation you have to use Memory stream.
+                    if (model.AttachmentData != null && model.AttachmentData.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            model.AttachmentData.CopyTo(ms);
+                            newExpense.AttachmentFileName = model.AttachmentName;
+                            newExpense.AttachmentData = ms.ToArray();
+                        }
+                    }
 
                     _dbContext.Add(newExpense);
                     _dbContext.SaveChanges();
@@ -43,7 +55,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
             }
             catch (Exception ex)
             {
-
+                throw new Exception($"Oops something went horribly wrong! Here is the error: {ex.Message}");
             }
         }
 
