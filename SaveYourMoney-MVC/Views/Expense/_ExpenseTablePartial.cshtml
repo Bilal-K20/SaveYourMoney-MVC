@@ -20,8 +20,7 @@ else
                     <th>Amount</th>
                     <th>Category</th>
                     <th>Date</th>
-                    <th>Attatched Document Title</th>
-                    <th>Document</th>
+                    <th>Attached Document</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -35,8 +34,16 @@ else
                         <td>@Html.Raw(expense.Amount.ToString("C", System.Globalization.CultureInfo.CurrentCulture))</td>
                         <td>@Model.Categories.FirstOrDefault(c => c.CategoryId == expense.CategoryId)?.CategoryName</td>
                         <td>@expense.Date.ToShortDateString()</td>
-                        <td>@expense.AttachmentFileName</td>
-                        <td>@expense.AttachmentData</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(expense.AttachmentFileName))
+                            {
+                                <a href="javascript:void(0)" onclick="previewDocument('@expense.AttachmentFileName', '@expense.AttachmentData')">Preview</a>
+                            }
+                            else
+                            {
+                                <p>No document attached</p>
+                            }
+                        </td>
                         <td>
                             <a asp-controller="Expense" asp-action="EditExpense" asp-route-expenseId="@expense.ExpenseId" class="btn btn-primary">Edit</a>
                             <form asp-controller="Expense" asp-action="DeleteExpense" method="post" style="display: inline;">
@@ -50,3 +57,46 @@ else
         </table>
     </div>
 }
+
+<script>function previewDocument(fileName, data) {
+        console.log("In previewDocument function");
+        console.log("fileName:", fileName);
+        console.log("data:", data);
+
+        var extension = fileName.split('.').pop().toLowerCase();
+        console.log("extension:", extension);
+
+        if (extension === 'pdf') {
+            var blob = base64ToBlob(data, 'application/pdf');
+            console.log("blob:", blob);
+            var url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        } else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+            var imageUrl = "data:image/" + extension + ";base64," + data;
+            var imgWindow = window.open("");
+            imgWindow.document.write("<img src='" + imageUrl + "'/>");
+        } else {
+            alert("Unsupported file type. Cannot preview this file.");
+        }
+    }
+
+    function base64ToBlob(base64, contentType) {
+        var byteCharacters = atob(base64);
+        var byteArrays = [];
+
+        for (var offset = 0; offset < byteCharacters.length; offset += 512) {
+            var slice = byteCharacters.slice(offset, offset + 512);
+
+            var byteNumbers = new Array(slice.length);
+            for (var i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            var byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        var blob = new Blob(byteArrays, { type: contentType });
+        return blob;
+    }</script>
+
