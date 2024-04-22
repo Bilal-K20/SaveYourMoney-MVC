@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SaveYourMoney_MVC.BusinessLogic;
 using SaveYourMoney_MVC.Models;
 using SaveYourMoney_MVC.ViewModels;
@@ -22,6 +23,8 @@ namespace SaveYourMoney_MVC.Controllers
             _budgetManager = budgetManager;
         }
 
+        [Authorize]
+        [HttpGet]
         public IActionResult Index(int? year)
         {
             _userId = GetUserIdFromSession();

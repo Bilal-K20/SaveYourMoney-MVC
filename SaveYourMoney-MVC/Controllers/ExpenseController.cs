@@ -109,6 +109,7 @@ namespace SaveYourMoney_MVC.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult FilterExpenses(string date, string type, int? year, string? month)
         {
             var model = ExpenseManager.FilterExpenses(date, type, year, month);

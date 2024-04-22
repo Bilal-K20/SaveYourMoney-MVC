@@ -1,0 +1,45 @@
+﻿@*@using System.Linq
+@model SaveYourMoney_MVC.ViewModels.FinancialReportViewModel
+
+<h1>Financial Report</h1>
+
+<form asp-controller="Report" asp-action="Index" method="get">
+    <label for="year">Select Year:</label>
+
+    @{
+        var years = Enumerable.Range(DateTime.Now.Year - 10, 11).Select(y => new SelectListItem { Value = y.ToString(), Text = y.ToString() });
+    }
+
+    @Html.DropDownListFor(m => m.SelectedYear, years, "All", new { @class = "form-control", onchange = "this.form.submit()" })
+
+    <button type="submit">Filter</button>
+</form>
+
+<h2>Total Income: @Model.TotalIncome</h2>
+<h2>Total Expenditure: @Model.TotalExpenditure</h2>
+<h2>Total Savings: @Model.TotalSavings</h2>
+
+@if (Model.CategorySummaries != null && Model.CategorySummaries.Any())
+{
+    <h2>Category Summaries:</h2>
+    <ul>
+        @foreach (var category in Model.CategorySummaries)
+        {
+            <li>
+                @category.CategoryName:
+                @if (category.IsOverBudget)
+                {
+                    <span style="color:red">@category.TotalAmount</span> / @category.Budget(Over Budget)
+}
+else
+{
+@category.TotalAmount / @category.Budget
+}
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No data available</p>
+}*@
