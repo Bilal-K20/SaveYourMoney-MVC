@@ -54,28 +54,32 @@ namespace SaveYourMoney_MVC.BusinessLogic
         }
 
 
-        public int
-            RegisterANewCustomer(string firstname, string lastname, string email, string username, string password)
+        public int RegisterANewCustomer(string firstname, string lastname, string email, string username, string password)
         {
             //bool isRegisterationSuccessful = false;
 
-            var errors = Guard(firstname, lastname, email, username, password, password);
+            //var errors = Guard(firstname, lastname, email, username, password, password);
 
-            if (errors.Count > 0)
-            {
-                // If there are validation errors, return -1 indicating failure
-                return -1;
-            }
+            //if (errors.Count > 0)
+            //{
+            //    // If there are validation errors, return -1 indicating failure
+            //    return -1;
+            //}
+
+            // Check if the user already exists
+            if (UsernameExists(username))
+                return -2; // User with the same username already exists
+
+            if (EmailExists(email))
+                return -3; // User with the same email already exists
+
+            // Validate user submission
+            if (!ValidateAllUserSubmission(firstname, lastname, email, username, password, password))
+                return -1; // Validation failed
 
             try
             {
-                //if (isUserSubmissionValidated)
-                //{
-                    //Need a method to check if the user qalready exists
-                    //Linq would be quickets and easiest way
-                    // the db currently allows users to register with exact same email etc
-                    // need to look at how to change the column properties.
-
+                
                     var newCustomer = new Customer();
                     newCustomer.FirstName = firstname;
                     newCustomer.LastName = lastname;

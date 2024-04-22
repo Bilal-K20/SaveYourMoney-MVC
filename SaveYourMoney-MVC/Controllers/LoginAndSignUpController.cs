@@ -189,34 +189,34 @@ namespace SaveYourMoney_MVC.Controllers
             {
                 // Registration failed due to other reasons
                 TempData["ErrorMessage"] = "An unexpected error occurred during registration. Please try again later.";
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("Error");
+            }
+            else if (registerResult == -2)
+            {
+                // Registration failed due to other reasons
+                TempData["ErrorMessage"] = $"An account with this username: {username} already exists. Please try again later.";
+                return RedirectToAction("Error");
+            }
+            else if (registerResult == -3)
+            {
+                // Registration failed due to other reasons
+                TempData["ErrorMessage"] = $"An account with this email: {email} already exists. Please try again later.";
+                return RedirectToAction("Error");
             }
             else
             {
                 return RedirectToAction("Login");
             }
 
-            //if (isSubmissionValidated)
-            //{
-            //    isUserRegistered = _signUpManager.RegisterANewCustomer(firstName, lastName, email, username, password);
+        }
 
-            //}
-
-            //if (isUserRegistered == -1)
-            //{
-            //    // needs to return the message with the information. 
-            //    //return RedirectToAction("Login", "LoginAndSignUp");
-
-            //    TempData["ErrorMessage"] = "An error occurred during registration. Please try again.";
-            //    return RedirectToAction("Error", "Home"); // Change "Home" to your error page controller and action name
-
-
-            //}
-            //else
-            //{
-            //    return View(signUpViewModel);
-            //}
-
+        [HttpGet]
+        public IActionResult Error()
+        {
+            // Display error messages from TempData
+            ViewBag.ErrorMessage = TempData["ErrorMessage"];
+            ViewBag.Errors = TempData["Errors"] as List<string>;
+            return View();
         }
 
         public IActionResult AccessDenied()
