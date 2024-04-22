@@ -1,14 +1,97 @@
-﻿<!DOCTYPE html>
+﻿@*@model SaveYourMoney_MVC.ViewModels.ReportViewModel*@
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-</head>
-<body>
-    <div>
-        @RenderBody()
+<div class="container">
+    <h1 class="mt-4 mb-4">Financial Report</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Total Income
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalIncome.ToString("C", System.Globalization.CultureInfo.CurrentCulture)</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Total Expenses
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.TotalExpenditure.ToString("C", System.Globalization.CultureInfo.CurrentCulture)</h5>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-</html>
 
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Net Cost
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Net.ToString("C", System.Globalization.CultureInfo.CurrentCulture)</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (Model.PageIndex > 0)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageIndex - 1)">Previous</a>
+                </li>
+            }
+            @for (int i = 0; i < Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i">@((i + 1).ToString())</a>
+                </li>
+            }
+            @if (Model.PageIndex < Model.TotalPages - 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageIndex + 1)">Next</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Income', 'Total Expenses'],
+            datasets: [{
+                label: 'Amount',
+                data: [@Model.TotalIncome, @Model.TotalExpenditure],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>

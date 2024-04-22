@@ -1,0 +1,33 @@
+﻿@*@model SaveYourMoney_MVC.ViewModels.ReportViewModel*@
+
+<div class="card">
+    <div class="card-header">
+        Financial Summary
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Total Income:</h5>
+            </div>
+            <div class="col-md-6">
+                <h5>@Model.TotalIncome.ToString("C", System.Globalization.CultureInfo.CurrentCulture)</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Total Expenditure:</h5>
+            </div>
+            <div class="col-md-6">
+                <h5>@Model.TotalExpenditure.ToString("C", System.Globalization.CultureInfo.CurrentCulture)</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Net Cost:</h5>
+            </div>
+            <div class="col-md-6">
+                <h5>@Model.Net.ToString("C", System.Globalization.CultureInfo.CurrentCulture)</h5>
+            </div>
+        </div>
+    </div>
+</div>
