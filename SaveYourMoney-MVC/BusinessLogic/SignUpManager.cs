@@ -54,7 +54,8 @@ namespace SaveYourMoney_MVC.BusinessLogic
         }
 
 
-        public int RegisterANewCustomer(string firstname, string lastname, string email, string username, string password)
+        public int
+            RegisterANewCustomer(string firstname, string lastname, string email, string username, string password)
         {
             //bool isRegisterationSuccessful = false;
 

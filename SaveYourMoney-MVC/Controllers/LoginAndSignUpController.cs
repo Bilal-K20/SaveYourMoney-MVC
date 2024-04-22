@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SaveYourMoney_MVC.BusinessLogic;
+using SaveYourMoney_MVC.BusinessLogic.Service;
 using SaveYourMoney_MVC.Repositories;
 using SaveYourMoney_MVC.ViewModels;
 
@@ -23,13 +24,15 @@ namespace SaveYourMoney_MVC.Controllers
         private readonly ILoginAndSignUpManager LoginAndSignUpManager;
         private readonly ILoginManager _loginManager;
         private readonly ISignUpManager _signUpManager;
+        private readonly IPasswordHashingService PasswordHashingService;
 
 
 
-        public LoginAndSignUpController(ILoginManager loginManager, ISignUpManager signUpManager)
+        public LoginAndSignUpController(ILoginManager loginManager, ISignUpManager signUpManager, IPasswordHashingService passwordHashingService)
         {
             _loginManager = loginManager;
             _signUpManager = signUpManager;
+            PasswordHashingService = passwordHashingService;
         }
 
 
@@ -176,8 +179,11 @@ namespace SaveYourMoney_MVC.Controllers
                 return RedirectToAction("Error");
             }
 
+            // Hash the password before storing it
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
             // Attempt to register a new customer
-            int registerResult = _signUpManager.RegisterANewCustomer(firstName, lastName, email, username, password);
+            int registerResult = _signUpManager.RegisterANewCustomer(firstName, lastName, email, username, hashedPassword);
 
             if(registerResult == -1)
             {

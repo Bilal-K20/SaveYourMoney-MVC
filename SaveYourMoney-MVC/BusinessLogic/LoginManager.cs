@@ -47,9 +47,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
             int userId = -1;
             try
             {
-
-
-               userId = await GetUserDeatilsByUsername(username);
+                userId = await GetUserDeatilsByUsername(username);
 
                 var user = await _dbContext.Customers.FirstOrDefaultAsync(u => u.UserName == username);
 
@@ -58,28 +56,24 @@ namespace SaveYourMoney_MVC.BusinessLogic
                     return new LoginResult { Success = false, Message = "User not found." };
                 }
 
+                // Verify the password using bcrypt
                 if (!VerifyPassword(password, user.Password))
                 {
-                    return new LoginResult { Success = false, Message = "Incorrect password." , UserId = user.CustomerId};
+                    return new LoginResult { Success = false, Message = "Incorrect password.", UserId = user.CustomerId };
                 }
-
             }
             catch (Exception ex)
             {
-                 var errorMessage = ex.Message;
+                var errorMessage = ex.Message;
                 return new LoginResult { Success = false, Message = "Sorry something went horribly wrong..." };
-
             }
             return new LoginResult { Success = true, Message = "Login successful.", UserId = userId };
-
         }
 
-        // You need to implement this method based on how you store and verify passwords
+        // Verify the password using bcrypt
         private bool VerifyPassword(string password, string passwordHash)
         {
-            // Implement password verification logic here
-            // For simplicity, let's assume we're comparing plain passwords for now
-            return password == passwordHash;
+            return BCrypt.Net.BCrypt.Verify(password, passwordHash);
         }
     }
 

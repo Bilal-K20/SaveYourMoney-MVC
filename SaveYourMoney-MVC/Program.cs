@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using SaveYourMoney_MVC.BusinessLogic;
+using SaveYourMoney_MVC.BusinessLogic.Service;
 using SaveYourMoney_MVC.Repositories;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ builder.Services.AddScoped<ISignUpManager, SignUpManager>();
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IBudgetManager, BudgetManager>();
 builder.Services.AddScoped<IExpenseManager, ExpenseManager>();
+builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 
 
 var app = builder.Build();
