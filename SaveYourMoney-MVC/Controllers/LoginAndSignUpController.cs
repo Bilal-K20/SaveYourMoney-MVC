@@ -132,6 +132,17 @@ namespace SaveYourMoney_MVC.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            // Perform logout logic here
+            HttpContext.SignOutAsync();
+
+            // Redirect to home page or any other page after logout
+            return RedirectToAction("Index", "Home");
+        }
+
         private int GetUserIdByUsername(string username)
         {
             var userId = -1;
