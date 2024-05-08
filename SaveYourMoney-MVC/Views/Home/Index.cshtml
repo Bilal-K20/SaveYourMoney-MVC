@@ -2,8 +2,100 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHFpOWMyZGN3dnBxNmhveWt5ZG9mNGdoZWxiYmdsajUzMXNocWFrNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2ldspiMPFVdXJ34gDc/giphy.gif');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            padding-top: 50px; /* Adjust this value based on your navbar height */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="container-fluid content">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-8 offset-md-2 text-center">
+                    <h1>Welcome to SaveYourMoney!</h1>
+                    <p class="lead">Start managing your finances effectively!</p>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Create Categories</h5>
+                            <p class="card-text">You can create different categories like groceries, entertainment, bills, etc., to organize your expenses.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Set Budgets</h5>
+                            <p class="card-text">For each category, set a budget to manage your spending effectively. You'll be able to track your spending against your budget.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Financial Insights</h5>
+                            <p class="card-text">Gain insights into your spending habits. The web application generates graphs that display the expenditure in each category and also states the net value.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-8 offset-md-2 text-center">
+                    <h2>Ready to get started?</h2>
+                    
+                    <a asp-controller="LoginAndSignUp" asp-action="Login" class="btn btn-primary mt-3">Log In</a>
+                    <a asp-controller="LoginAndSignUp" asp-action="SignUp" class="btn btn-secondary mt-3">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

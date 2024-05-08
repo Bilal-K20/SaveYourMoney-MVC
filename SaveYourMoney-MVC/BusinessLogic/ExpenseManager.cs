@@ -193,12 +193,12 @@ namespace SaveYourMoney_MVC.BusinessLogic
             return isAllDataValidated;
         }
 
-        public ExpenseViewModel FilterExpenses(string date, string type, int? year, string? month)
+        public ExpenseViewModel FilterExpenses(int userId, string date, string type, int? year, string? month)
         {
             var newViewModel = new ExpenseViewModel();
             try
             {
-                var expenses = _dbContext.Expenses.Include(e => e.Category).AsQueryable();
+                var expenses = _dbContext.Expenses.Where(e => e.CustomerId == userId).Include(e => e.Category).AsQueryable();
 
                 if (!string.IsNullOrEmpty(date))
                 {
@@ -283,7 +283,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
         private bool IsDateValid (DateTime date)
         {
             var today = DateTime.Today;
-            var minDate = today.AddYears(-1);
+            var minDate = today.AddYears(-2);
             var maxDate = today.AddYears(10);
 
             if (date >= minDate && date <= maxDate)

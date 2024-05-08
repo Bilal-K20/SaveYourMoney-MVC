@@ -11,7 +11,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
 		Expense GetExpenseById(int customerId, int expenseId);
 
 		List<Expense> GetExpenseBySearch(int customerId,string search);
-		ExpenseViewModel FilterExpenses(string date, string type, int? year, string? month);
+		ExpenseViewModel FilterExpenses(int userId,string date, string type, int? year, string? month);
         void UpdateExpense(int customerId, Expense expense);
 
 		bool DeleteExpense(int customerId, int expenseId);
