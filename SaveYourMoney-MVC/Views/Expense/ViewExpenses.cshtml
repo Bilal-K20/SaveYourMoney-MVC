@@ -45,7 +45,11 @@
                 <button id="filterButton" class="btn btn-primary mt-4">Filter</button>
             </div>
             <div class="col-auto">
-                <button asp-controller="Expense" asp-action="AddExpense" class="btn btn-primary mb-4" id="addExpenseButton" data-bs-toggle="modal" data-bs-target="#addExpenseModal" data-url="@Url.Action("AddExpense", "Expense")">Add an Expense</button>
+                @if (Model.Expenses != null || Model.Expenses.Count() > 0)
+                {
+                    <button asp-controller="Expense" asp-action="AddExpense" class="btn btn-success mb-4" id="addExpenseButton" data-bs-toggle="modal" data-bs-target="#addExpenseModal" data-url="@Url.Action("AddExpense", "Expense")">Add an Expense</button>
+
+                }
             </div>
         </div>
 

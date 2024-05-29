@@ -25,22 +25,30 @@ else
             <table class="table table-striped table-bordered" id="budgetTable">
                 <thead>
                     <tr>
-                        <th>Budget Id</th>
                         <th>Budget Amount</th>
                         <th>Category Name</th>
                         <th>Description</th>
                         <th>Date Set</th>
+                        <th>Actions</th> <!-- Added Actions column -->
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var budget in Model.Budgets)
                     {
                         <tr>
-                            <td>@budget.BudgetId</td>
                             <td>@budget.Amount</td>
                             <td>@Model.Categories.FirstOrDefault(c => c.CategoryId == budget.CategoryId)?.CategoryName</td>
                             <td>@budget.Description</td>
                             <td>@budget.Date</td>
+                            <td>
+                                <a asp-action="EditBudget" asp-controller="Budget" asp-route-budgetId="@budget.BudgetId" class="btn btn-primary">Edit</a>
+                                @*//href="EditBudget?id=@budget.BudgetId"*@
+                            <form asp-controller="Budget" asp-action="DeleteBudget" method="post" style="display: inline;">
+                                <input type="hidden" name="budgetId" value="@budget.BudgetId" />
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this budget?');">Delete</button>
+                            </form>
+
+                            </td>
                         </tr>
                     }
                 </tbody>

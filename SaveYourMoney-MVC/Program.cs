@@ -47,6 +47,7 @@ builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IBudgetManager, BudgetManager>();
 builder.Services.AddScoped<IExpenseManager, ExpenseManager>();
 builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
+builder.Services.AddScoped<IRepository, AppDbContext>();
 
 
 var app = builder.Build();

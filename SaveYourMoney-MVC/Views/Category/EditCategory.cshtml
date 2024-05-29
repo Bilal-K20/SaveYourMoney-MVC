@@ -1,38 +1,94 @@
-﻿@model SaveYourMoney_MVC.ViewModels.EditCategoryViewModel
+﻿@model EditABudgetViewModel
 
-@{
-    ViewData["Title"] = "Edit Category";
-    @*@Html.HiddenFor(vm => vm.OldCategoryName)*@
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Budget</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Budget</h1>
 
-<h1>Edit Category</h1>
-<hr>
+        <form id="editBudgetForm" method="post" asp-action="EditBudget" asp-controller="Budget">
+            <input type="hidden" id="budgetId" name="BudgetId" value="@Model.BudgetId" />
 
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-
-<form asp-action="EditCategory" method="post">
-    <input type="hidden" name="OldCategoryName" value="@Model.OldCategoryName" />
-
-    <input type="hidden" name="categoryId" value="@Model.CategoryId" />
-    <div class="form-group">
-        <label for="newCategoryName">New Category Name</label>
-        <input type="text" class="form-control" id="newCategoryName" name="newCategoryName" value="@Model.NewCategoryName" />
-        @Html.ValidationMessageFor(model => model.NewCategoryName, "", new { @class = "text-danger" })
-
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="text" class="form-control" id="amount" name="Amount" value="@Model.Amount" required>
+                <div class="invalid-feedback" id="amountError"></div>
+            </div>
+            <div class="mb-3">
+                <label for="categoryName" class="form-label">Category</label>
+                <select class="form-select" id="categoryName" name="NewCategoryId" required>
+                    <option value="@Model.OldCategoryId">@Model.Categories.FirstOrDefault(c => c.CategoryId == @Model.OldCategoryId)?.CategoryName</option>
+                    @foreach (var category in Model.Categories.Where(c => c.CategoryId != @Model.OldCategoryId))
+                    {
+                        <option value="@category.CategoryId">@category.CategoryName</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" class="form-control" id="description" name="Description" value="@Model.Description" required>
+                <div class="invalid-feedback" id="descriptionError"></div>
+            </div>
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" required>
+                <div class="invalid-feedback" id="dateError"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a asp-action="Category" class="btn btn-secondary">Cancel</a>
-</form>
 
-@section Scripts {
-    <script>document.getElementById('editCategoryForm').addEventListener('submit', function (event) {
-            var oldCategoryName = document.getElementById('oldCategoryName').value;
-            var newCategoryName = document.getElementById('newCategoryName').value;
+    <script>$(document).ready(function () {
+            $('#editBudgetForm').on('submit', function (e) {
+                let isValid = true;
 
-            if (oldCategoryName === newCategoryName) {
-                alert('New category name must be different from the old category name.');
-                event.preventDefault(); // Prevent form submission
-            }
+                // Validate Amount
+                const amount = parseFloat($('#amount').val());
+                if (isNaN(amount) || amount <= 0) {
+                    isValid = false;
+                    $('#amount').addClass('is-invalid');
+                    $('#amountError').text('Amount must be a positive number.');
+                } else {
+                    $('#amount').removeClass('is-invalid');
+                    $('#amountError').text('');
+                }
+
+                // Validate Description
+                const description = $('#description').val();
+                const descriptionPattern = /^[a-zA-Z0-9\s]+$/;
+                if (description && !descriptionPattern.test(description)) {
+                    isValid = false;
+                    $('#description').addClass('is-invalid');
+                    $('#descriptionError').text('Description can contain only alphanumeric characters and spaces.');
+                } else {
+                    $('#description').removeClass('is-invalid');
+                    $('#descriptionError').text('');
+                }
+
+                // Validate Date
+                const date = new Date($('#date').val());
+                const currentDate = new Date();
+                const threeMonthsAgo = new Date();
+                threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
+                const oneMonthAhead = new Date();
+                oneMonthAhead.setMonth(currentDate.getMonth() + 1);
+                if (isNaN(date.getTime()) || date < threeMonthsAgo || date > oneMonthAhead) {
+                    isValid = false;
+                    $('#date').addClass('is-invalid');
+                    $('#dateError').text('Date must be within the last 3 months and not more than 1 month in the future.');
+                } else {
+                    $('#date').removeClass('is-invalid');
+                    $('#dateError').text('');
+                }
+
+                if (!isValid) {
+                    e.preventDefault(); // Prevent form submission if validation fails
+                }
+            });
         });</script>
-}
+</body>
+</html>

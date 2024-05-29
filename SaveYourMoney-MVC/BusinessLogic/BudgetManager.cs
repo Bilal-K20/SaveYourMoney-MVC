@@ -14,6 +14,53 @@ namespace SaveYourMoney_MVC.BusinessLogic
             _dbContext = dbContext;
         }
 
+        public void UpdateBudget(int? customerId, int budgetId, int newCategoryId, double newAmount, string? newDescription, DateTime newDate)
+        {
+            // Validate inputs
+            if (!IsValidCustomerId(Convert.ToInt32(customerId)))
+                throw new ArgumentException("Invalid customer ID");
+
+            if (!IsValidCategoryId(newCategoryId))
+                throw new ArgumentException("Invalid category ID");
+
+            if (!IsValidAmount(newAmount))
+                throw new ArgumentException("Invalid amount");
+
+            if (!IsValidDescription(newDescription))
+                throw new ArgumentException("Invalid description");
+
+            if (!IsValidDate(newDate))
+                throw new ArgumentException("Invalid date");
+
+
+            try
+            {
+                var budget = _dbContext.Budgets.FirstOrDefault(c => c.CustomerId == customerId && c.BudgetId == budgetId);
+
+                if (budget != null)
+                {
+
+                    budget.CustomerId = Convert.ToInt32(customerId);
+                    budget.CategoryId = newCategoryId;
+                    budget.Amount = newAmount;
+                    budget.Date = newDate;
+                    budget.Description = newDescription;
+
+
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    var e = new ArgumentNullException();
+                    throw e;
+                }
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+            }
+        }
+
         public void AddBudget(int customerId, int categoryId , double amount, string? description, DateTime date)
         {
 
@@ -55,6 +102,29 @@ namespace SaveYourMoney_MVC.BusinessLogic
         }
 
 
+        public void DeleteBudget(int? customerId, int budgetId)
+        {
+            if (customerId > 0 && budgetId > 0)
+            {
+                try
+                {
+                   var budget = _dbContext.Budgets.FirstOrDefault(x => x.CustomerId == customerId && x.BudgetId == budgetId);
+                    _dbContext.Budgets.Remove(budget);
+                    _dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    var message = ex.Message;
+                }
+            }
+            else
+            {  //doesn't need a variable but i have done it just to understand how it works
+                var e = new ArgumentNullException();
+                throw e;
+            }
+
+        }
+
         public List<Budget> GetBudgets(int customerId)
         {
             List<Budget> budgets;
@@ -76,6 +146,21 @@ namespace SaveYourMoney_MVC.BusinessLogic
         public List<Budget> GetBudgetsForACategory(int customerId, int categoryId)
         {
             throw new NotImplementedException();
+        }
+
+        public Budget GetBudgetForACategory(int? customerId, int budgetId)
+        {
+            Budget budget = null;
+            try
+            {
+                budget = _dbContext.Budgets.FirstOrDefault(b => b.CustomerId == customerId && b.BudgetId == budgetId);
+            }
+            catch (Exception ex)
+            {
+                var e = ex.Message;
+            };
+
+            return budget;
         }
 
         // Validate Customer ID (example regex pattern)
@@ -122,6 +207,8 @@ namespace SaveYourMoney_MVC.BusinessLogic
             string pattern = @"^[a-zA-Z0-9\s]+$";
             return Regex.IsMatch(description, pattern);
         }
+
+
     }
 
 }

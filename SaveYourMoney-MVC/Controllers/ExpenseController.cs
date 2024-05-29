@@ -41,14 +41,10 @@ namespace SaveYourMoney_MVC.Controllers
             var categories = CategoryManager.GetCategories(userId);
             var months = ExpenseManager.GetMonthsList();
 
-
-
             list = (List<Expense>)ExpenseManager.GetAllExpenses(userId);
 
 
-
             var expenseViewModel = new ExpenseViewModel { Categories = categories, Expenses = expenses, Months = months};
-
 
 
             return View(expenseViewModel);
@@ -88,7 +84,7 @@ namespace SaveYourMoney_MVC.Controllers
 
             if (!string.IsNullOrWhiteSpace(model.ExpenseTitle) && model.ExpenseType != null && model.Date != null )
             {
-
+                
             var check = ExpenseManager.IsNeccessaryDataPresent(model);
                 ExpenseManager.AddExpense(userId, model);
 
@@ -106,6 +102,31 @@ namespace SaveYourMoney_MVC.Controllers
 
 
                 return RedirectToAction("ViewExpenses");
+            }
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult DeleteExpense(int expenseId)
+        {
+            // Retrieve customer ID from session
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
+
+            try
+            {
+                // Call a method to delete the budget from your data store
+                ExpenseManager.DeleteExpense(Convert.ToInt32(customerId), expenseId);
+
+                // If the deletion is successful, you can redirect the user to a different page
+                return RedirectToAction("ViewExpenses");
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors that occur during deletion
+                ViewData["ErrorMessage"] = $"An error occurred while deleting the expense: {ex.Message}";
+                ViewData["Errors"] = new List<string>();
+                return View("Error");
             }
         }
 

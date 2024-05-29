@@ -1,10 +1,7 @@
 ﻿@model SaveYourMoney_MVC.ViewModels.AddANewBudgetViewModel
 
 <form method="post" onsubmit="return validateForm()">
-    <div class="form-group">
-        <label for="amount">Amount:</label>
-        <input type="number" class="form-control" id="amount" name="amount" value="@Model.Amount" required>
-    </div>
+
     <div class="form-group">
         <label for="category">Category:</label>
         <select class="form-control" id="category" name="selectedCategoryId" asp-for="SelectedCategoryId">
@@ -14,6 +11,10 @@
                 <option value="@category.CategoryId">@category.CategoryName</option>
             }
         </select>
+    </div>
+    <div class="form-group">
+        <label for="amount">Amount:</label>
+        <input type="number" class="form-control" id="amount" name="amount" value="@Model.Amount" required>
     </div>
     <div class="form-group">
         <label for="description">Description:</label>

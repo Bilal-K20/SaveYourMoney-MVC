@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    bool isAuthenticated = User.Identity.IsAuthenticated;
 }
 
 
@@ -84,14 +85,19 @@
                 </div>
             </div>
 
-            <div class="row mt-5">
-                <div class="col-md-8 offset-md-2 text-center">
-                    <h2>Ready to get started?</h2>
-                    
-                    <a asp-controller="LoginAndSignUp" asp-action="Login" class="btn btn-primary mt-3">Log In</a>
-                    <a asp-controller="LoginAndSignUp" asp-action="SignUp" class="btn btn-secondary mt-3">Sign Up</a>
+            @if (!isAuthenticated)
+            {
+                <div class="row mt-5">
+                    <div class="col-md-8 offset-md-2 text-center">
+                        <h2>Ready to get started?</h2>
+
+                        <a asp-controller="LoginAndSignUp" asp-action="Login" class="btn btn-primary mt-3">Log In</a>
+                        <a asp-controller="LoginAndSignUp" asp-action="SignUp" class="btn btn-secondary mt-3">Sign Up</a>
+                    </div>
                 </div>
-            </div>
+            }
+
+
         </div>
     </div>
 

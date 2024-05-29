@@ -1,0 +1,139 @@
+﻿@model EditABudgetViewModel
+
+<h1>Edit Budget</h1>
+
+<form id="editBudgetForm" method="post" asp-action="EditBudget" asp-controller="Budget">
+    <input type="hidden" id="budgetId" name="BudgetId" value="@Model.BudgetId" />
+
+    <div class="mb-3">
+        <label for="amount" class="form-label">Amount</label>
+        <input type="text" class="form-control" id="amount" name="Amount" value="@Model.Amount" required>
+        <div class="invalid-feedback" id="amountError"></div>
+    </div>
+    <div class="mb-3">
+        <label for="categoryName" class="form-label">Category</label>
+        <select class="form-select" id="categoryName" name="NewCategoryId" required>
+            <option value="@Model.OldCategoryId">@Model.Categories.FirstOrDefault(c => c.CategoryId == @Model.OldCategoryId)?.CategoryName</option>
+            @foreach (var category in Model.Categories.Where(c => c.CategoryId != @Model.OldCategoryId))
+            {
+                <option value="@category.CategoryId">@category.CategoryName</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" class="form-control" id="description" name="Description" value="@Model.Description" required>
+        <div class="invalid-feedback" id="descriptionError"></div>
+    </div>
+    <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" class="form-control" id="date" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" required>
+        <div class="invalid-feedback" id="dateError"></div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+<!-- Spinner and status message -->
+<div class="mb-3 d-none" id="spinner">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+<div id="statusMessage"></div>
+
+<script>document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('editBudgetForm');
+        const spinner = document.getElementById('spinner');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // Function to show spinner and status message
+        function showStatusMessage(message) {
+            spinner.classList.remove('d-none');
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('text-success', 'text-danger');
+        }
+
+        // Function to hide spinner and status message
+        function hideSpinner() {
+            spinner.classList.add('d-none');
+        }
+
+        // Real-time validation functions
+        function validateAmount() {
+            const amount = document.getElementById('amount').value;
+            const amountPattern = /^\d+(\.\d{1,2})?$/;
+            if (!amountPattern.test(amount) || parseFloat(amount) <= 0) {
+                document.getElementById('amount').classList.add('is-invalid');
+                document.getElementById('amountError').textContent = 'Amount must be a positive number with up to two decimal places.';
+                return false;
+            } else {
+                document.getElementById('amount').classList.remove('is-invalid');
+                document.getElementById('amountError').textContent = '';
+                return true;
+            }
+        }
+
+        function validateDescription() {
+            const description = document.getElementById('description').value;
+            const descriptionPattern = /^[a-zA-Z0-9\s]+$/;
+            if (description && !descriptionPattern.test(description)) {
+                document.getElementById('description').classList.add('is-invalid');
+                document.getElementById('descriptionError').textContent = 'Description can contain only alphanumeric characters and spaces.';
+                return false;
+            } else {
+                document.getElementById('description').classList.remove('is-invalid');
+                document.getElementById('descriptionError').textContent = '';
+                return true;
+            }
+        }
+
+        function validateDate() {
+            const date = new Date(document.getElementById('date').value);
+            const currentDate = new Date();
+            const threeMonthsAgo = new Date(currentDate);
+            threeMonthsAgo.setMonth(currentDate.getMonth() - 3);
+            const oneMonthAhead = new Date(currentDate);
+            oneMonthAhead.setMonth(currentDate.getMonth() + 1);
+            if (isNaN(date.getTime()) || date < threeMonthsAgo || date > oneMonthAhead) {
+                document.getElementById('date').classList.add('is-invalid');
+                document.getElementById('dateError').textContent = 'Date must be within the last 3 months and not more than 1 month in the future.';
+                return false;
+            } else {
+                document.getElementById('date').classList.remove('is-invalid');
+                document.getElementById('dateError').textContent = '';
+                return true;
+            }
+        }
+
+        // Attach event listeners for real-time validation
+        document.getElementById('amount').addEventListener('input', validateAmount);
+        document.getElementById('amount').addEventListener('blur', validateAmount);
+
+        document.getElementById('description').addEventListener('input', validateDescription);
+        document.getElementById('description').addEventListener('blur', validateDescription);
+
+        document.getElementById('date').addEventListener('input', validateDate);
+        document.getElementById('date').addEventListener('blur', validateDate);
+
+        // Form submission validation
+        form.addEventListener('submit', function (e) {
+            const isAmountValid = validateAmount();
+            const isDescriptionValid = validateDescription();
+            const isDateValid = validateDate();
+
+            if (!isAmountValid || !isDescriptionValid || !isDateValid) {
+                e.preventDefault(); // Prevent form submission if any validation fails
+                alert('Please check all inputs and ensure they are valid.');
+            } else {
+                showStatusMessage('Saving changes...'); // Show status message when form submission starts
+
+                // Delay hiding spinner for 3 to 5 seconds
+                setTimeout(function () {
+                    hideSpinner(); // Hide spinner after delay
+                    statusMessage.textContent = 'Changes saved successfully!'; // Display success message
+                    statusMessage.classList.add('text-success'); // Add success message styling
+                }, 6000); // 6 seconds delay
+            }
+        });
+    });</script>
+

@@ -62,7 +62,28 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
         public bool DeleteExpense(int customerId, int expenseId)
         {
-            throw new NotImplementedException();
+            var success = false;
+            if (customerId > 0 && expenseId > 0)
+            {
+                try
+                {
+                    var expense = _dbContext.Expenses.FirstOrDefault(x => x.CustomerId == customerId && x.ExpenseId == expenseId);
+                    _dbContext.Expenses.Remove(expense);
+                    _dbContext.SaveChanges();
+
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    var message = ex.Message;
+                }
+                return success;
+            }
+            else
+            {  //doesn't need a variable but i have done it just to understand how it works
+                var e = new ArgumentNullException();
+                throw e;
+            }
         }
 
         public List<Expense> GetAllExpenses(int customerId)
@@ -73,10 +94,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
             {
                 if (customerId >= 0)
                 {
-
                     expenses = _dbContext.Expenses.Where(e => e.CustomerId == customerId).ToList();
-
-
                 }
                 else
                 {
