@@ -105,6 +105,81 @@ namespace SaveYourMoney_MVC.Controllers
             }
         }
 
+        // GET: Expense/EditExpense
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditExpense(int expenseId)
+        {
+            int userId = GetUserIdFromSession();
+            var expense = ExpenseManager.GetExpenseById(userId, expenseId);
+
+            if (expense == null)
+            {
+                return NotFound();
+            }
+
+            var editExpenseViewModel = new EditExpenseViewModel
+            {
+                ExpenseId = expense.ExpenseId,
+                ExpenseTitle = expense.ExpenseTitle,
+                Amount = expense.Amount,
+                ExpenseDescription = expense.Description,
+                OldExpenseType = (ExpenseType)expense.Type,
+                OldCategoryId = (int)expense.CategoryId,
+                AttachmentName = expense.AttachmentFileName,
+                Date = expense.Date,
+                Categories = CategoryManager.GetCategories(userId)
+                    .Select(c => new SelectListItem { Value = c.CategoryId.ToString(), Text = c.CategoryName })
+                    .ToList()
+            };
+
+            return PartialView("_EditExpensePartial", editExpenseViewModel);
+        }
+
+        // POST: Expense/EditExpense
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditExpense(EditExpenseViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                int userId = GetUserIdFromSession();
+
+                if (model.AttachmentData != null && model.AttachmentData.Length > 0)
+                {
+                    // Handle file upload here
+                    // You can save the attachment data and update the AttachmentFileName property in your data store
+                }
+
+                //var expense = new Expense
+                //{
+                //    ExpenseId = model.ExpenseId,
+                //    ExpenseTitle = model.ExpenseTitle,
+                //    Amount = model.Amount,
+                //    Description = model.ExpenseDescription,
+                //    Type = model.ExpenseType,
+                //    CategoryId = model.SelectedCategoryId,
+                //    AttachmentFileName = model.AttachmentFileName, // You may need to update this property if the file is changed
+                //    Date = model.Date
+                //};
+
+                //_expenseManager.UpdateExpense(userId, expense);
+
+                ViewBag.SuccessMessage = "Expense has been successfully updated.";
+
+                return RedirectToAction("ViewExpenses", "Expense");
+            }
+
+            // Model is invalid, repopulate categories and return the partial view with validation errors
+            int userIdInvalid = GetUserIdFromSession();
+            //model.Categories = _categoryManager.GetCategories(userIdInvalid)
+            //    .Select(c => new SelectListItem { Value = c.CategoryId.ToString(), Text = c.CategoryName })
+            //    .ToList();
+
+            return PartialView("_EditExpensePartial", model);
+        }
+
+
 
         [Authorize]
         [HttpPost]

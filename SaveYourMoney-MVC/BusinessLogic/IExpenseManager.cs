@@ -19,6 +19,7 @@ namespace SaveYourMoney_MVC.BusinessLogic
 
 		void AddExpense(int userId, AddAnExpenseViewModel model);
 		List<string> GetMonthsList();
+        bool UpdateExpense(int userId, EditExpenseViewModel model);
     }
 }
 

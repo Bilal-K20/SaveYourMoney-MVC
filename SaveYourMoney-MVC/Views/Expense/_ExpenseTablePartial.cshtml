@@ -45,7 +45,8 @@ else
                             }
                         </td>
                         <td>
-                            <a asp-controller="Expense" asp-action="EditExpense" asp-route-expenseId="@expense.ExpenseId" class="btn btn-primary">Edit</a>
+
+                            <button asp-controller="Expense" asp-action="EditExpense" asp-route-expenseId="@expense.ExpenseId" class="btn btn-primary edit-expense-btn" data-bs-toggle="modal" data-bs-target="#editExpenseModal" data-expense-id="@expense.ExpenseId">Edit</button>
                             <form asp-controller="Expense" asp-action="DeleteExpense" method="post" style="display: inline;">
                                 <input type="hidden" name="expenseId" value="@expense.ExpenseId" />
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this expense?');">Delete</button>
@@ -127,6 +128,7 @@ else
 
         const blob = new Blob(byteArrays, { type: contentType });
         return blob;
+
     }</script>
 
 

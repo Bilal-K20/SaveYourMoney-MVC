@@ -1,0 +1,80 @@
+﻿@model SaveYourMoney_MVC.ViewModels.EditExpenseViewModel
+
+    <head>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+
+    </head>
+
+<form id="editExpenseForm">
+    <input type="hidden" id="expenseId" name="expenseId" value="@Model.ExpenseId" />
+
+    <!-- Expense title -->
+    <div class="mb-3">
+        <label for="editExpenseTitle" class="form-label">Expense Title</label>
+        <input type="text" class="form-control" id="editExpenseTitle" name="editExpenseTitle" value="@Model.ExpenseTitle">
+    </div>
+
+    <!-- Expense type -->
+    <div class="mb-3">
+        <label for="editExpenseType" class="form-label">Expense Type</label>
+        <select asp-for="OldExpenseType" class="form-control" id="editExpenseType" required>
+            <option value="@Model.OldExpenseType">@Model.OldExpenseType</option>
+
+            @foreach (var value in Enum.GetValues(typeof(ExpenseType)))
+            {
+                <option value="@value">@value</option>
+            }
+        </select>
+        <span class="text-danger" id="typeError"></span>
+
+    </div>
+
+    <!-- Amount -->
+    <div class="mb-3">
+        <label for="editExpenseAmount" class="form-label">Amount</label>
+        <input type="number" class="form-control" id="editExpenseAmount" name="editExpenseAmount" value="@Model.Amount">
+    </div>
+
+    <!-- Category -->
+    <div class="mb-3">
+        <label for="editExpenseCategory" class="form-label">Category</label>
+        <select class="form-select" id="editExpenseCategory" name="editExpenseCategory">
+            <option value="@Model.OldCategoryId">@Model.Categories.FirstOrDefault(c => c.Value == @Model.OldCategoryId.ToString()).Text</option>
+
+            @foreach (var category in Model.Categories.Where(c => c.Value != @Model.OldCategoryId.ToString()))
+            {
+                <option value="@category.Value">@category.Text</option>
+            }s
+        </select>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+        <label for="editExpenseDescription" class="form-label">Description</label>
+        <textarea class="form-control" id="editExpenseDescription" name="editExpenseDescription" rows="3">@Model.ExpenseDescription</textarea>
+    </div>
+
+    <!-- Date -->
+    <div class="mb-3">
+        <label for="editExpenseDate" class="form-label">Date</label>
+        <input type="date" class="form-control" id="editExpenseDate" name="editExpenseDate" value="@Model.Date.ToString("yyyy-MM-dd")">
+    </div>
+
+
+    <div class="mb-3">
+        <label for="editExpenseAttachmentName" class="form-label">Attachment Name</label>
+        <input type="text" class="form-control" id="editExpenseAttachmentName" name="editExpenseAttachmentName" value="@Model.AttachmentName">
+    </div>
+
+
+    <div class="mb-3">
+        <label for="editExpenseAttachmentData" class="form-label">Attachment Data</label>
+        <input type="file" class="form-control" id="editExpenseAttachmentData" name="editExpenseAttachmentData" accept=".pdf, .xsls,image/*" >
+    </div>
+
+
+    <!-- Submit button -->
+    <button type="button" id="saveChangesBtn" class="btn btn-primary">Save Changes</button>
+</form>
+
+

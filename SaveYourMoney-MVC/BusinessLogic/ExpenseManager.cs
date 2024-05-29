@@ -60,6 +60,11 @@ namespace SaveYourMoney_MVC.BusinessLogic
             }
         }
 
+        public bool UpdateExpense(int userId, EditExpenseViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool DeleteExpense(int customerId, int expenseId)
         {
             var success = false;
@@ -312,8 +317,6 @@ namespace SaveYourMoney_MVC.BusinessLogic
                 return false;
             }
         }
-
-
     }
 }
 
